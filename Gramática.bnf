@@ -1,0 +1,78 @@
+<max-letter> ::=| "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" 
+
+<min-letter> ::=  "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+
+<digit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+<numero> ::= <digit> {<digit>}*
+
+<identificador-var> ::= "v"{<max-letter> | <digit> | <min-letter>}*
+
+<identificador-func> ::= "f"{<max-letter> | <digit> | <min-letter>}*
+<identificador-proc> ::= "p"{<max-letter> | <digit> | <min-letter>}*
+
+
+<boolean> ::= "true" | "false"
+
+<especificador-tipo> ::= "int"   
+                    | "boolean"
+
+
+#//-----------------Variaveis--------------------//
+
+<var-declaracao> ::= <var> ";"
+
+<var> ::= <especificador-tipo> <identificador-var> <attr-var> 
+
+<attr-var> ::= "=" <expression>
+
+#//-----------------Funcoes--------------------//
+
+<funcao-declaracao> ::= "func" <especificador-tipo> <identificador-func> "(" <lista-parametros> ")" "{" <statement> "return " <var> "}"
+                    | "func" <especificador-tipo> <identificador-func> "(" ")" "{" <statement> "return " <var> "}"
+
+<lista-parametros> ::= <parametros-declaracao> 
+                    | <parametros-declaracao> "," <lista-parametros> 
+
+<parametros-declaracao> ::= <especificador-tipo> <identificador-var>
+
+#//----------------Procedimento----------------//
+
+<procedimento-declaracao> ::= "proc" <identificador-proc> "(" <lista-parametros> ")" "{" <statement> "}"
+
+
+#//---------------------------------------------------------
+<statement> ::= <var-declaracao>
+            | "if" "(" <condicao> ")" "{" <statement> "}" ["else" <statement> ]
+            | "while" "(" <condicao> ")" "{" <statement> "}"
+            | "puts" <identificador-var>
+            | "puts" <identificador-func> #nao pede na lista
+            | "puts" <numero>
+            | "break"
+            | "continue"
+            | "call" <identificador-func>
+            | "call" <identificador-proc>
+
+
+<expression> ::= <logical-expression>
+            | <arithmetic-expression>
+            | <numero>
+            | <boolean>
+
+<logical-expression> ::= <termo> <op-condicional> <termo>
+
+<termo> ::= <identificador-var> | <numero> | <identificador-func>
+
+<arithmetic-expression> ::= <termo-aritmetico> {( "+" | "-" ) <termo-aritmetico>}
+
+<termo-aritmetico> ::= <fator> { ( "*" | "/" ) <fator> }
+
+<fator> ::= <identificador-var> | <numero> | "(" <arithmetic-expression> ")" | <identificador-func>
+
+<condicao> ::= <expression>
+            | <expression> <op-condicional> <condicao>
+
+<op-condicional> ::= "=="| "<>" | "<" |"<=" | ">" | ">="
+<op-aritmetico>  ::= "+" | "-" | "/" | "*"
+
+
