@@ -4,12 +4,12 @@
 
 <digit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-<numero> ::= <digit> {<digit>}*
+<numero> ::= <digit> *{<digit>}
 
-<identificador-var> ::= "v"{<max-letter> | <digit> | <min-letter>}*
+<identificador-var> ::= "v"1*{<max-letter> | <digit> | <min-letter>}
 
-<identificador-func> ::= "f"{<max-letter> | <digit> | <min-letter>}*
-<identificador-proc> ::= "p"{<max-letter> | <digit> | <min-letter>}*
+<identificador-func> ::= "f"1*{<max-letter> | <digit> | <min-letter>}
+<identificador-proc> ::= "p"1*{<max-letter> | <digit> | <min-letter>}
 
 
 <boolean> ::= "true" | "false"
@@ -28,8 +28,8 @@
 
 #//-----------------Funcoes--------------------//
 
-<funcao-declaracao> ::= "func" <especificador-tipo> <identificador-func> "(" <lista-parametros> ")" "{" <statement> "return " <var> "}"
-                    | "func" <especificador-tipo> <identificador-func> "(" ")" "{" <statement> "return " <var> "}"
+<funcao-declaracao> ::= "func" <especificador-tipo> <identificador-func> "(" <lista-parametros> ")" "{" <statement> "return " <var> "}" #Retorno na ultima linha, ruby-like
+                    | "func" <especificador-tipo> <identificador-func> "(" ")" "{" <statement> "return " <var> "}" #Retorno na ultima linha, ruby-like
 
 <lista-parametros> ::= <parametros-declaracao> 
                     | <parametros-declaracao> "," <lista-parametros> 
@@ -41,38 +41,50 @@
 <procedimento-declaracao> ::= "proc" <identificador-proc> "(" <lista-parametros> ")" "{" <statement> "}"
 
 
-#//---------------------------------------------------------
-<statement> ::= <var-declaracao>
-            | "if" "(" <condicao> ")" "{" <statement> "}" ["else" <statement> ]
-            | "while" "(" <condicao> ")" "{" <statement> "}"
-            | "puts" <identificador-var>
-            | "puts" <identificador-func> #nao pede na lista
-            | "puts" <numero>
-            | "break"
-            | "continue"
-            | "call" <identificador-func>
-            | "call" <identificador-proc>
+#//---------------------START--------------------------------
+<start> ::= 0*1{<statement-list>}
 
+<statement-list> ::= <statement> <statement-list> | "ε"
+#//---------------------START--------------------------------
+#//----------------------------------------------------------
 
+<statement> ::= <var-declaracao> #Cria var
+            | <funcao-declaracao> #Cria func
+            | <procedimento-declaracao> #Cria proc
+            | "if" "(" <condicao> ")" "{" <statement-list> "}" ["else" <statement-list> ] 
+            | "while" "(" <condicao> ")" "{" <statement-list> "}"
+            #statement-list, para poder mais de um statement
+            # if(...){
+            #     if(...){
+            #     }
+            #     if(...){   
+            #     }
+            # }                                                                           
+            | "puts" <identificador-var>";"                                                                                                    
+            | "puts" <identificador-func>";" #nao pede na lista                                                                              
+            | "puts" <numero>";"
+            | <identificador-func>";" #Chama função
+            | <identificador-proc>";" #Chama procedimento
+            | "break"";" #Dentro de laço apenas, sintático
+            | "continue"";" #Dentro de laço apenas, sintático
+            
 <expression> ::= <logical-expression>
             | <arithmetic-expression>
             | <numero>
             | <boolean>
+            | <identificador-func>
+            | <identificador-var>
 
 <logical-expression> ::= <termo> <op-condicional> <termo>
 
 <termo> ::= <identificador-var> | <numero> | <identificador-func>
 
-<arithmetic-expression> ::= <termo-aritmetico> {( "+" | "-" ) <termo-aritmetico>}
+<arithmetic-expression> ::= <termo-aritmetico> *{( "+" | "-" ) <termo-aritmetico>}
 
-<termo-aritmetico> ::= <fator> { ( "*" | "/" ) <fator> }
+<termo-aritmetico> ::= <fator> *{ ( "*" | "/" ) <fator> }
 
-<fator> ::= <identificador-var> | <numero> | "(" <arithmetic-expression> ")" | <identificador-func>
+<fator> ::= <identificador-var> | <numero> | "(" <arithmetic-expression> ")"
 
-<condicao> ::= <expression>
-            | <expression> <op-condicional> <condicao>
+<condicao> ::= <expression> | <expression> <op-condicional> <condicao>
 
 <op-condicional> ::= "=="| "<>" | "<" |"<=" | ">" | ">="
-<op-aritmetico>  ::= "+" | "-" | "/" | "*"
-
-
