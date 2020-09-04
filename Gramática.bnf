@@ -27,13 +27,11 @@
 <attr-var> ::= "=" <expression>
 
 #//-----------------Funcoes--------------------//
+<funcao-declaracao> ::= "func" <especificador-tipo> <identificador-func> "(" <func-aux> 
+<func-aux> ::= <lista-parametros> ")" "{" <statement> "return " <var> "}" | ")" "{" <statement> "return " <var> "}"
 
-<funcao-declaracao> ::= "func" <especificador-tipo> <identificador-func> "(" <lista-parametros> ")" "{" <statement> "return " <var> "}" #Retorno na ultima linha, ruby-like
-                    | "func" <especificador-tipo> <identificador-func> "(" ")" "{" <statement> "return " <var> "}" #Retorno na ultima linha, ruby-like
-
-<lista-parametros> ::= <parametros-declaracao> 
-                    | <parametros-declaracao> "," <lista-parametros> 
-
+<lista-parametros> ::= <parametro-declaracao> <parametro-aux>
+<parametro-aux> ::= ','<lista-parametros> | ε
 <parametros-declaracao> ::= <especificador-tipo> <identificador-var>
 
 #//----------------Procedimento----------------//
@@ -44,14 +42,14 @@
 #//---------------------START--------------------------------
 <start> ::= 0*1{<statement-list>}
 
-<statement-list> ::= <statement> <statement-list> | "ε"
+<statement-list> ::= <statement> <statement-list> | ε
 #//---------------------START--------------------------------
 #//----------------------------------------------------------
 
 <statement> ::= <var-declaracao> #Cria var
             | <funcao-declaracao> #Cria func
             | <procedimento-declaracao> #Cria proc
-            | "if" "(" <condicao> ")" "{" <statement-list> "}" ["else" <statement-list> ] 
+            | "if" "(" <condicao> ")" "{" <statement-list> "}" <if-aux> 
             | "while" "(" <condicao> ")" "{" <statement-list> "}"
             #statement-list, para poder mais de um statement
             # if(...){
@@ -67,7 +65,7 @@
             | <identificador-proc>";" #Chama procedimento
             | "break"";" #Dentro de laço apenas, sintático
             | "continue"";" #Dentro de laço apenas, sintático
-            
+<if-aux> ::= 'else' '{'<statement>'}'            
 <expression> ::= <logical-expression>
             | <arithmetic-expression>
             | <numero>
@@ -85,6 +83,7 @@
 
 <fator> ::= <identificador-var> | <numero> | "(" <arithmetic-expression> ")"
 
-<condicao> ::= <expression> | <expression> <op-condicional> <condicao>
+<condicao> ::= <expression> <condicao-aux>
+<condicao-aux> ::= <op-condicional> <condicao> | ε
 
 <op-condicional> ::= "=="| "<>" | "<" |"<=" | ">" | ">="
