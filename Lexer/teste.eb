@@ -1,0 +1,5 @@
+func fSum(int vA, int vB){
+    int vRes = vA + vB;
+}
+
+puts fSum;
