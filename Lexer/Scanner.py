@@ -15,7 +15,7 @@ class Scanner:
     def scan(self): #
         self.scanTokens()
         self.tokens.append(Token("FIM",'',self.linha)) #Escrever fim de arquivo nos tokens
-        #Percorrer tokens e verifica ID para colocar tokens if, while e etc (palavras reservadas) --> NOT DONE YET
+        self.scanReserved() # Verifica a tabela de tokens para atualizar o Tipo dos tokens das palavras reservadas
         return self.tokens
     def scanTokens(self):# procura os tokens
         while(self.atual < len(self.programa)): #enquanto n chegar no final
@@ -33,7 +33,7 @@ class Scanner:
            
             elif char == '{': # Chaves (Curly Brackets) esquerdo
                 self.tokens.append(Token("LCBRACK",self.programa[self.inicio:self.atual],self.linha))
-                           
+
             elif char == '}': # Direito
                 self.tokens.append(Token("RCBRACK",self.programa[self.inicio:self.atual],self.linha))
            
@@ -87,6 +87,46 @@ class Scanner:
             else:
                 print('Caractere Inválido na linha:',self.linha)
                 exit(2)
+    
+    def scanReserved(self):
+        for i in self.tokens:
+            if(i.tipo == 'ID'):
+                if(i.lexema == 'func'):
+                    i.tipo = "FUNC"
+                
+                elif(i.lexema == 'int'):
+                    i.tipo = 'INT'
+                
+                elif(i.lexema == 'boolean'):
+                    i.tipo = 'TBOOLEAN' #Tipo Booleano
+                
+                elif(i.lexema == 'true'):
+                    i.tipo = 'BOOLEAN' #Booleano
+                
+                elif(i.lexema == 'false'):
+                    i.tipo = 'BOOLEAN'
+                
+                elif(i.lexema == 'return'):
+                    i.tipo = 'RETURN'
+                
+                elif(i.lexema == 'if'):
+                    i.tipo = 'IF'
+                
+                elif(i.lexema == 'while'):
+                    i.tipo = 'WHILE'
+                
+                elif(i.lexema == 'puts'):
+                    i.tipo = 'PUTS'
+                
+                elif(i.lexema == 'break'):
+                    i.tipo = 'BREAK'
+                
+                elif(i.lexema == 'continue'):
+                    i.tipo = 'CONTINUE'
+                
+                elif(i.lexema == 'else'):
+                    i.tipo = 'ELSE'
+
     def lookAhead(self):
         if(self.atual < len(self.programa)):# verifica se nao esta no final do programa
             return self.programa[self.atual] # Pega o lookahead
