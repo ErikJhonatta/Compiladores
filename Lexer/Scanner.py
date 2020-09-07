@@ -6,8 +6,7 @@ class Scanner:
         self.inicio = 0
         self.atual = 0
         self.linha = 1
-    def __str__(self):
-        return "Tokens: %s\n Inicio: %s\n Atual: %s\n Linha: %s\n" % (str(self.tokens),str(self.inicio),str(self.atual),str(self.linha))
+    
     def nextChar(self):
         self.atual +=1 #atualiza antes de retornar
         return self.programa[self.atual - 1] #Passa pro proximo char
@@ -34,7 +33,7 @@ class Scanner:
            
             elif char == '{': # Chaves (Curly Brackets) esquerdo
                 self.tokens.append(Token("LCBRACK",self.programa[self.inicio:self.atual],self.linha))
-           
+                           
             elif char == '}': # Direito
                 self.tokens.append(Token("RCBRACK",self.programa[self.inicio:self.atual],self.linha))
            
