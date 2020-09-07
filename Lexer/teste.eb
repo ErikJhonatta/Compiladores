@@ -1,7 +1,22 @@
 func fSum(int vA, int vB){
     int vRes = vA + vB;
+    return vRes;
 }
 
 puts fSum;
 
-int vT = true;
+boolean vT = true;
+
+if(vT){
+    while(vT){
+        continue;
+        break;
+    }
+}else{
+    if(vT){
+    
+    }
+    if(vT){
+
+    }
+}
