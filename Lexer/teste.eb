@@ -3,3 +3,5 @@ func fSum(int vA, int vB){
 }
 
 puts fSum;
+
+int vT = true;
