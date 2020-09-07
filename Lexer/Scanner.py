@@ -92,7 +92,7 @@ class Scanner:
         for i in self.tokens:
             if(i.tipo == 'ID'):
                 if(i.lexema == 'func'):
-                
+                    i.tipo = "FUNC"
                 elif(i.lexema == 'proc'):
                     i.tipo = "PROC"
                 
