@@ -7,6 +7,7 @@ if __name__ == "__main__":
         programa = ''
         for i in fonte.readlines():
             programa += i
+        fonte.close()
     except:
         print("Código Fonte não encontrado")
         exit(1)
