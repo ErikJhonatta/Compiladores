@@ -33,17 +33,17 @@ class Parser:
                         self.indexToken +=1
                     else:
                         self.erro = True
-                        raise Exception('Erro sintatico Ponto e virgula Var declaracao')
+                        raise Exception('Erro sintatico Ponto e virgula Var declaracao na linha '+str(self.tokenAtual().linha))
                 else:
                     self.erro = True
-                    raise Exception('Erro sintatico Atribuicao Var declaracao')
+                    raise Exception('Erro sintatico Atribuicao Var declaracao na linha '+str(self.tokenAtual().linha))
             else:
                 self.erro = True
-                raise Exception('Erro sintatico Identificador Var declaracao')
+                raise Exception('Erro sintatico Identificador Var declaracao na linha '+str(self.tokenAtual().linha))
         #TODO: resto das variaveis do statement, fora <var-declaracao>
         else:
             self.erro = True
-            raise Exception('Erro sintatico Token fora do statement')
+            raise Exception('Erro sintatico Token fora do statement na linha '+str(self.tokenAtual().linha))
     def expression(self):
         if(self.tokenAtual().tipo == 'NUMBER'):#<numero> que pode occorrer só, na aritmetica ou na logica
             if (not (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):# Se nao tiver simbolo de expressao logica
@@ -59,7 +59,7 @@ class Parser:
                         return
                     else:
                         self.erro = True
-                        raise Exception('Erro sintatico numero op ?, (arithmetic expression)')
+                        raise Exception('Erro sintatico numero op ?, (arithmetic expression) na linha '+str(self.tokenAtual().linha))
             else: #Se tiver simbolo de expressao logica
                 self.indexToken +=1 # Em cima do simbolo logico (op-condicional)
                 if(self.lookAhead().tipo == 'NUMBER' or self.lookAhead().tipo == 'ID'):
@@ -67,7 +67,7 @@ class Parser:
                     return
                 else:
                     self.erro = True
-                    raise Exception('Erro sintatico numero op ?, (logical expression)')
+                    raise Exception('Erro sintatico numero op ?, (logical expression) na linha '+str(self.tokenAtual().linha))
         
         if(self.tokenAtual().tipo == 'BOOLEAN'):# Se a expressão for só um boolean
             self.indexToken +=1
