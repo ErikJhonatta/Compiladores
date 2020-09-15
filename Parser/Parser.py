@@ -58,6 +58,7 @@ class Parser:
                         self.indexToken +=2 #Token depois do numero
                         return
                     else:
+                        self.erro = True
                         raise Exception('Erro sintatico numero op ?, (arithmetic expression)')
             else: #Se tiver simbolo de expressao logica
                 self.indexToken +=1 # Em cima do simbolo logico (op-condicional)
@@ -65,18 +66,13 @@ class Parser:
                     self.indexToken +=2 # Passa para o token depois do numero
                     return
                 else:
+                    self.erro = True
                     raise Exception('Erro sintatico numero op ?, (logical expression)')
-
-        else:
-            self.indexToken +=1
-            return
         
         if(self.tokenAtual().tipo == 'BOOLEAN'):# Se a expressão for só um boolean
             self.indexToken +=1
             return
-
-        if(self.tokenAtual().tipo == 'ID' and (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):#Logical
-            pass
+            
         if(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
             self.indexToken +=1
             return
