@@ -1,4 +1,4 @@
-from Token import Token
+from Lexer.Token import Token
 class Scanner:
     def __init__(self, programa):
         self.tokens = []
@@ -93,6 +93,7 @@ class Scanner:
             if(i.tipo == 'ID'):
                 if(i.lexema == 'func'):
                     i.tipo = "FUNC"
+                
                 elif(i.lexema == 'proc'):
                     i.tipo = "PROC"
                 

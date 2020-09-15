@@ -3,13 +3,12 @@ func fSum(int vA, int vB){
     return vRes;
 }
 
-puts fSum;
+puts fSum(2,3);
 
 boolean vT = true;
 
 if(vT){
     while(vT){
-        continue;
         break;
     }
 }else{

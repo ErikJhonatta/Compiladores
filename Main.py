@@ -1,4 +1,4 @@
-from Scanner import Scanner
+from Lexer.Scanner import Scanner
 import sys
 if __name__ == "__main__":
     path = sys.argv[1]
