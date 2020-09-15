@@ -44,9 +44,30 @@ class Parser:
         else:
             self.indexToken +=1
             return 
-    def expression(self):# Precisa atualizar o index do token, se n dá erro na função que chamou essa aqui
-        print("Dentro de expression")
-        if(self.tokenAtual().tipo == 'NUMBER' and not (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):# Se a expressao for só um numero
+    def expression(self):
+        if(self.tokenAtual().tipo == 'NUMBER'):#<numero> que pode occorrer só, na aritmetica ou na logica
+            if (not (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):# Se nao tiver simbolo de expressao logica
+                #checa simbolo de op aritmetica
+                if(not (self.lookAhead().tipo == 'SUM' or self.lookAhead().tipo == 'SUB' or self.lookAhead().tipo == 'DIV' or self.lookAhead().tipo == 'MUL')):#Se nao tiver simbolo de expressao aritmetica
+                    #Entra aqui se for apenas numero
+                    self.indexToken +=1
+                    return
+                else:#Se tiver simbolo aritmetico
+                    self.indexToken+=1 # Em cima do simbolo aritmetico
+                    if(self.lookAhead().tipo == 'NUMBER' or self.lookAhead().tipo == 'ID'):
+                        self.indexToken +=2 #Token depois do numero
+                        return
+                    else:
+                        raise Exception('Erro sintatico numero op ?, (arithmetic expression)')
+            else: #Se tiver simbolo de expressao logica
+                self.indexToken +=1 # Em cima do simbolo logico (op-condicional)
+                if(self.lookAhead().tipo == 'NUMBER' or self.lookAhead().tipo == 'ID'):
+                    self.indexToken +=2 # Passa para o token depois do numero
+                    return
+                else:
+                    raise Exception('Erro sintatico numero op ?, (logical expression)')
+
+        else:
             self.indexToken +=1
             return
         
@@ -54,11 +75,12 @@ class Parser:
             self.indexToken +=1
             return
 
+        if(self.tokenAtual().tipo == 'ID' and (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):#Logical
+            pass
         if(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
             self.indexToken +=1
             return
 
-        #TODO: Logical Expression e Arithmetic Expression dentro da var expression
-
+        
     def lookAhead(self):
         return self.tabTokens[self.indexToken + 1]

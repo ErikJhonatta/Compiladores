@@ -1,4 +1,11 @@
-int vA = 0;
-int vRes = fSum;
-boolean vbool = true;
-int vB = vC;
+int v1 = 1 + 1;
+int v2 = 1 * 1;
+int v3 = 1 - 1;
+int v4 = 1 / 1;
+
+boolean v5 = 1 == 1;
+boolean v6 = 1 <> 1;
+boolean v7 = 1 < 1 ;
+boolean v8 = 1 <= 1;
+boolean v9 = 1 > 1;
+boolean v9 = 1 >= 1;
