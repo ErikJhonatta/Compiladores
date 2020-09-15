@@ -1,18 +1,22 @@
 from Lexer.Scanner import Scanner
+from Parser.Parser import Parser
 import sys
 if __name__ == "__main__":
     path = sys.argv[1]
     try:
-        fonte = open(path,'r')
-        programa = ''
-        for i in fonte.readlines():
-            programa += i
+        fonte = open(path, 'r')
+        programa = ''.join(fonte.readlines())
         fonte.close()
-    except:
+    except Exception:
         print("Código Fonte não encontrado")
-        exit(1)
+        sys.exit(1)
 
     lexer = Scanner(programa)
-    tabTokens = lexer.scan()
-    for i in tabTokens:
+    tabtokens = lexer.scan()
+    for i in tabtokens:
         print(i)
+    parser = Parser(tabtokens)
+    try:
+        parser.start()
+    except Exception as e:
+        print(e)

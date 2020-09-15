@@ -1,21 +1,4 @@
-func fSum(int vA, int vB){
-    int vRes = vA + vB;
-    return vRes;
-}
-
-puts fSum(2,3);
-
-boolean vT = true;
-
-if(vT){
-    while(vT){
-        break;
-    }
-}else{
-    if(vT){
-    
-    }
-    if(vT){
-
-    }
-}
+int vA = 0;
+int vRes = fSum;
+boolean vbool = true;
+int vB = vC;
