@@ -58,6 +58,11 @@ class Parser:
                                     self.indexToken += 1
                                     if(self.tokenAtual().tipo == 'COMMA'):#virgula para um proximo parametro
                                         self.indexToken += 1
+                                    elif(self.tokenAtual().tipo == 'RBRACK'):
+                                        break
+                                    else:
+                                        self.erro = True
+                                        raise Exception('Erro sintatico virgula Func declaracao na linha '+str(self.tokenAtual().linha))    
                                 else:
                                     self.erro = True
                                     raise Exception('Erro sintatico identificador Var declaracao na linha '+str(self.tokenAtual().linha))
@@ -69,7 +74,8 @@ class Parser:
                         self.indexToken += 1
                         if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
                             while(self.tokenAtual().tipo != 'RCBRACK'): #verificar caso em que não encontra o RCBRACK
-                                return self.statement()#chamo recursivamente para verificar os stmts contido dentro do escopo da função
+                                self.indexToken += 1
+                                return self.statement()#chamo recursivamente para verificar os stmts contidos dentro do escopo da função
                                 #fazer parte do RETURN
                         else:
                             self.erro = True
@@ -82,10 +88,7 @@ class Parser:
                     raise Exception('Erro sintatico Identificador da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
             else:
                 self.erro = True
-                raise Exception('Erro sintatico Tipo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
-        
-        #elif(self.tokenAtual().tipo == "RETURN"):
-            
+                raise Exception('Erro sintatico Tipo da Funcao declaracao na linha ' + str(self.tokenAtual().linha)) 
             
         else:
             self.erro = True

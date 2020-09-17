@@ -1,4 +1,3 @@
-func boolean teste (int a, int c){
+func boolean teste (int a, int c, int d, int e, int f){
 	int b = a;
-	return b;
 }
