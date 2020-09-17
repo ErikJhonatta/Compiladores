@@ -61,8 +61,8 @@
             | "puts" <identificador-var>";"                                                                                                    
             | "puts" <identificador-func>";" #nao pede na lista                                                                              
             | "puts" <numero>";"
-            | <identificador-func>";" #Chama função
-            | <identificador-proc>";" #Chama procedimento
+            | <identificador-func> "(" <lista-parametros> ")"";" #Chama função
+            | <identificador-proc> "(" <lista-parametros> ")"";" #Chama procedimento
             | "break"";" #Dentro de laço apenas, sintático
             | "continue"";" #Dentro de laço apenas, sintático
 <if-aux> ::= 'else' '{'<statement>'}'            
@@ -70,7 +70,7 @@
             | <arithmetic-expression>
             | <numero>
             | <boolean>
-            | <identificador-func>
+            | <identificador-func> "(" <lista-parametros> ")"
             | <identificador-var>
 
 <logical-expression> ::= <termo> <op-condicional> <termo>
