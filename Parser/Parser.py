@@ -149,6 +149,9 @@ class Parser:
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico Parentese esquerdo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
+                else:#é uma variavel
+                    self.indexToken +=1
+                    return
             else:
                 self.erro = True
                 raise Exception('Erro sintatico, id nao comeca com f ou v '+str(self.tokenAtual().linha))

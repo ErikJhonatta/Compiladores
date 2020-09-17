@@ -8,3 +8,4 @@ func int fSum(int vC, int vD){
 
 int vW = fSum(1,2);
 int vU = fSum();
+int vU = vA;
