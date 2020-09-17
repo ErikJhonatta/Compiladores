@@ -31,6 +31,7 @@ class Parser:
                     self.expression()
                     if(self.tokenAtual().tipo == 'SEMICOLON'):
                         self.indexToken +=1
+                        return #VERIFICAR
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico Ponto e virgula Var declaracao na linha '+str(self.tokenAtual().linha))
@@ -41,6 +42,54 @@ class Parser:
                 self.erro = True
                 raise Exception('Erro sintatico Identificador Var declaracao na linha '+str(self.tokenAtual().linha))
         #TODO: resto das variaveis do statement, fora <var-declaracao>
+
+        elif(self.tokenAtual().tipo == 'FUNC'):#tipo função
+            self.indexToken += 1
+            if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
+                self.indexToken += 1
+                if(self.tokenAtual().tipo == 'ID'):#identificador
+                    self.indexToken += 1
+                    if(self.tokenAtual().tipo == 'LBRACK'):#parentese esquerdo
+                        self.indexToken += 1
+                        while(self.tokenAtual().tipo != 'RBRACK'): #verificar caso em que não encontre o RBRACK
+                            if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
+                                self.indexToken += 1
+                                if(self.tokenAtual().tipo == 'ID'):#identificador
+                                    self.indexToken += 1
+                                    if(self.tokenAtual().tipo == 'COMMA'):#virgula para um proximo parametro
+                                        self.indexToken += 1
+                                    elif(self.tokenAtual().tipo == 'RBRACK'):
+                                        break
+                                    else:
+                                        self.erro = True
+                                        raise Exception('Erro sintatico virgula Func declaracao na linha '+str(self.tokenAtual().linha))    
+                                else:
+                                    self.erro = True
+                                    raise Exception('Erro sintatico identificador Var declaracao na linha '+str(self.tokenAtual().linha))
+                            else:
+                                self.erro = True
+                                raise Exception('Erro sintatico Tipo Var declaracao na linha '+str(self.tokenAtual().linha))
+                        
+                        #saiu do laço, isso significa que encontrou o RBRACK, logo, avanço um token
+                        self.indexToken += 1
+                        if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
+                            while(self.tokenAtual().tipo != 'RCBRACK'): #verificar caso em que não encontra o RCBRACK
+                                self.indexToken += 1
+                                return self.statement()#chamo recursivamente para verificar os stmts contidos dentro do escopo da função
+                                #fazer parte do RETURN
+                        else:
+                            self.erro = True
+                            raise Exception('Erro sintatico Chave esquerda da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
+                    else:
+                        self.erro = True
+                        raise Exception('Erro sintatico Parentese esquerdo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
+                else:
+                    self.erro = True
+                    raise Exception('Erro sintatico Identificador da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
+            else:
+                self.erro = True
+                raise Exception('Erro sintatico Tipo da Funcao declaracao na linha ' + str(self.tokenAtual().linha)) 
+            
         else:
             self.erro = True
             raise Exception('Erro sintatico Token fora do statement na linha '+str(self.tokenAtual().linha))
