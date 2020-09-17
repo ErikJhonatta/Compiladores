@@ -20,6 +20,8 @@ class Parser:
             return
     
     def statement(self):
+        print('Token Statement')
+        print(self.tokenAtual())
         #<var-declaracao>
         if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
             self.indexToken +=1
@@ -73,10 +75,12 @@ class Parser:
                         #saiu do laço, isso significa que encontrou o RBRACK, logo, avanço um token
                         self.indexToken += 1
                         if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
+                            self.indexToken += 1
                             while(self.tokenAtual().tipo != 'RCBRACK'): #verificar caso em que não encontra o RCBRACK
-                                self.indexToken += 1
-                                return self.statement()#chamo recursivamente para verificar os stmts contidos dentro do escopo da função
+                                self.statement()#chamo recursivamente para verificar os stmts contidos dentro do escopo da função
                                 #fazer parte do RETURN
+                            self.indexToken +=1
+                            
                         else:
                             self.erro = True
                             raise Exception('Erro sintatico Chave esquerda da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
@@ -89,10 +93,11 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico Tipo da Funcao declaracao na linha ' + str(self.tokenAtual().linha)) 
-            
+        
         else:
+            #print(self.tokenAtual())
             self.erro = True
-            raise Exception('Erro sintatico Token fora do statement na linha '+str(self.tokenAtual().linha))
+            raise Exception('Erro sintatico Token fora do statement na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))
     def expression(self):
         if(self.tokenAtual().tipo == 'NUMBER'):#<numero> que pode occorrer só, na aritmetica ou na logica
             if (not (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):# Se nao tiver simbolo de expressao logica
