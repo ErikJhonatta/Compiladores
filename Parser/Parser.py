@@ -20,8 +20,6 @@ class Parser:
             return
     
     def statement(self):
-        print('Token Statement')
-        print(self.tokenAtual())
         #<var-declaracao>
         if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
             self.indexToken +=1
@@ -123,14 +121,40 @@ class Parser:
                     self.erro = True
                     raise Exception('Erro sintatico numero op ?, (logical expression) na linha '+str(self.tokenAtual().linha))
         
-        if(self.tokenAtual().tipo == 'BOOLEAN'):# Se a expressão for só um boolean
+        elif(self.tokenAtual().tipo == 'BOOLEAN'):# Se a expressão for só um boolean
             self.indexToken +=1
             return
 
-        if(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
-            self.indexToken +=1
-            return
-
+        elif(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
+            if(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
+                if(self.tokenAtual().lexema[0] == 'f'):# se for uma funcao
+                    self.indexToken+=1
+                    if(self.tokenAtual().tipo == 'LBRACK'):
+                        self.indexToken +=1
+                        while(self.tokenAtual().tipo != 'RBRACK'):# verifica argumentos da funcao para ser chamada, nao checa tipos (semantica)
+                            if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
+                                self.indexToken += 1
+                                if(self.tokenAtual().tipo == 'COMMA'):
+                                    self.indexToken +=1
+                                elif(self.tokenAtual().tipo == 'RBRACK'):
+                                    break
+                                else:
+                                    self.erro = True
+                                    raise Exception('Erro sintatico Virgula na linha ' + str(self.tokenAtual().linha))
+                            else:
+                                self.erro = True
+                                raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
+                        #fora do laço encontrou o RBRACK
+                        self.indexToken+=1
+                    else:
+                        self.erro = True
+                        raise Exception('Erro sintatico Parentese esquerdo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
+            else:
+                self.erro = True
+                raise Exception('Erro sintatico, id nao comeca com f ou v '+str(self.tokenAtual().linha))
+        else:
+            self.erro = True
+            raise Exception('Erro sintatico expression '+str(self.tokenAtual().linha))
         
     def lookAhead(self):
         return self.tabTokens[self.indexToken + 1]

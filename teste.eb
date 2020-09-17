@@ -1,8 +1,9 @@
-func boolean teste (int a, int c, int d, int e, int f){
-	int b = a;
-	int c = d;
-	int e = f;
-	int e = f;
-	int e = f;
-	int e = f;
+int vA = 1;
+int vB = 2;
+
+func int fSum(int vC, int vD){
+	int vX = 0;
+	int vZ = 0;
 }
+
+int vW = fSum(1,2);
