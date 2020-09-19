@@ -77,6 +77,8 @@ class Parser:
                                 raise Exception('Erro sintatico Tipo Var declaracao na linha '+str(self.tokenAtual().linha))
                         
                         #saiu do laço, isso significa que encontrou o RBRACK
+                        if(self.tokenAtual().tipo != 'LCBRACK'):
+                            self.indexToken += 1
                         
                         if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
                             self.indexToken += 1
@@ -143,6 +145,8 @@ class Parser:
                             raise Exception('Erro sintatico Tipo Var declaracao na linha '+str(self.tokenAtual().linha))
                         
                     #saiu do laço, isso significa que encontrou o RBRACK
+                    if(self.tokenAtual().tipo != 'LCBRACK'):
+                        self.indexToken += 1
                     
                     if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
                         self.indexToken += 1
