@@ -28,7 +28,7 @@
 
 #//-----------------Funcoes--------------------//
 <funcao-declaracao> ::= "func" <especificador-tipo> <identificador-func> "(" <func-aux> 
-<func-aux> ::= <lista-parametros> ")" "{" <statement> "return " <var> "}" | ")" "{" <statement> "return " <var> "}"
+<func-aux> ::= <lista-parametros> ")" "{" <statement> "return " <identificador-var> ";" "}" | ")" "{" <statement> "return " <identificador-var> ";" "}"
 
 <lista-parametros> ::= <parametro-declaracao> <parametro-aux>
 <parametro-aux> ::= ','<lista-parametros> | ε
