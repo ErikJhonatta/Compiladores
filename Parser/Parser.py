@@ -121,6 +121,38 @@ class Parser:
                 self.erro = True
                 raise Exception('Erro sintatico Tipo da Funcao declaracao na linha ' + str(self.tokenAtual().linha)) 
         
+        elif (self.tokenAtual().tipo == 'PUTS'):
+            self.indexToken +=1
+            if(self.tokenAtual().tipo == 'ID' or self.tokenAtual().tipo == 'NUMBER'):
+                self.indexToken+=1
+                if(self.tokenAtual().tipo == 'SEMICOLON'):# se for um numero ou var o proximo token vai ser esse semicolon
+                    self.indexToken += 1
+                    return
+                else:
+                    if(self.tokenAtual().tipo == 'LBRACK'):
+                        self.indexToken+=1
+                        while(self.tokenAtual().tipo != 'RBRACK'):# verifica argumentos da funcao para ser chamada, nao checa tipos (semantica)
+                            if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
+                                self.indexToken += 1
+                                if(self.tokenAtual().tipo == 'COMMA'):
+                                    self.indexToken +=1
+                                elif(self.tokenAtual().tipo == 'RBRACK'):
+                                    break
+                                else:
+                                    self.erro = True
+                                    raise Exception('Erro sintatico Virgula na linha ' + str(self.tokenAtual().linha))
+                            else:
+                                self.erro = True
+                                raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
+                        #fora do laço encontrou o RBRACK
+                        self.indexToken+=1
+                        if(self.tokenAtual().tipo == 'SEMICOLON'):# ponto e virgula no final da declaração do puts
+                            self.indexToken +=1
+                            return
+
+            else:
+                self.erro = True
+                raise Exception('Erro sintatico depois do puts na linha ' + str(self.tokenAtual().linha))
         else:
             #print(self.tokenAtual())
             self.erro = True
@@ -178,6 +210,9 @@ class Parser:
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico Parentese esquerdo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
+                else:#é uma variavel
+                    self.indexToken +=1
+                    return
             else:
                 self.erro = True
                 raise Exception('Erro sintatico, id nao comeca com f ou v '+str(self.tokenAtual().linha))
