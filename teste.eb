@@ -9,7 +9,7 @@ func int fSum(int vC, int vD){
 	int vC = 0;
 	int vD = 0;
 	
-	return 3 + 2 / 4 * vZ - vC;
+	return vUniu;
 }
 
 int vW = fSum(1,2);
