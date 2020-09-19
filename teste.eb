@@ -39,4 +39,7 @@ puts fSum(1,2);
 puts 1;
 puts vA;
 puts fSum(1,2);
-puts fSum(1,2);
+puts fSum(1,2,3);
+
+pSum(1);
+fSum(1);
