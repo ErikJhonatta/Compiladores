@@ -23,7 +23,7 @@ class Parser:
         #<var-declaracao>
         if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
             self.indexToken +=1
-            if(self.tokenAtual().tipo == 'ID'):#identificador
+            if(self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'v'):#identificador var
                 self.indexToken +=1
                 if(self.tokenAtual().tipo == 'ATTR'):#atribuicao
                     self.indexToken +=1
