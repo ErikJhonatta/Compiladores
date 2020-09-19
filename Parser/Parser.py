@@ -41,8 +41,8 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico Identificador Var declaracao na linha '+str(self.tokenAtual().linha))
-        #TODO: resto das variaveis do statement, fora <var-declaracao>
-
+        
+        #<funcao-declaracao>
         elif(self.tokenAtual().tipo == 'FUNC'):#tipo função
             self.indexToken += 1
             if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
@@ -58,7 +58,13 @@ class Parser:
                                     self.indexToken += 1
                                     if(self.tokenAtual().tipo == 'COMMA'):#virgula para um proximo parametro
                                         self.indexToken += 1
+                                        if(self.tokenAtual().tipo == 'RBRACK'):
+                                            self.erro = True
+                                            raise Exception('Erro sintatico virgula Func declaracao na linha '+str(self.tokenAtual().linha))
+                                        else:
+                                            pass
                                     elif(self.tokenAtual().tipo == 'RBRACK'):
+                                        self.indexToken += 1
                                         break
                                     else:
                                         self.erro = True
@@ -70,16 +76,18 @@ class Parser:
                                 self.erro = True
                                 raise Exception('Erro sintatico Tipo Var declaracao na linha '+str(self.tokenAtual().linha))
                         
-                        #saiu do laço, isso significa que encontrou o RBRACK, logo, avanço um token
-                        self.indexToken += 1
+                        #saiu do laço, isso significa que encontrou o RBRACK
+                        if(self.tokenAtual().tipo != 'LCBRACK'):
+                            self.indexToken += 1
+                        
                         if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
                             self.indexToken += 1
                             while(self.tokenAtual().tipo != 'RCBRACK'): #verificar caso em que não encontra o RCBRACK
                                 if(self.tokenAtual().tipo == 'RETURN'):
                                     self.indexToken += 1
-                                    if(self.tokenAtual().tipo == 'ID'):
+                                    if(self.tokenAtual().tipo == 'ID'):#identificador
                                         self.indexToken += 1 
-                                        if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):
+                                        if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):#ponto e virgula seguido de uma chave direita
                                             self.indexToken += 1
                                             break
                                         else:
@@ -103,6 +111,61 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico Tipo da Funcao declaracao na linha ' + str(self.tokenAtual().linha)) 
+        
+        #<procedimento-declaracao>
+        elif(self.tokenAtual().tipo == 'PROC'):
+            self.indexToken += 1
+            if(self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'p'):
+                self.indexToken += 1
+                if(self.tokenAtual().tipo == 'LBRACK'):#parentese esquerdo
+                    self.indexToken += 1
+                    while(self.tokenAtual().tipo != 'RBRACK'): #obs: verificar caso em que não encontre o RBRACK
+                        if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
+                            self.indexToken += 1
+                            if(self.tokenAtual().tipo == 'ID'):#identificador
+                                self.indexToken += 1
+                                if(self.tokenAtual().tipo == 'COMMA'):#virgula para um proximo parametro
+                                    self.indexToken += 1
+                                    if(self.tokenAtual().tipo == 'RBRACK'):
+                                        self.erro = True
+                                        raise Exception('Erro sintatico virgula Proc declaracao na linha '+str(self.tokenAtual().linha))
+                                    else:
+                                        pass
+                                elif(self.tokenAtual().tipo == 'RBRACK'):
+                                    self.indexToken += 1
+                                    break
+                                else:
+                                    self.erro = True
+                                    raise Exception('Erro sintatico em Proc declaracao na linha '+str(self.tokenAtual().linha))    
+                            else:
+                                self.erro = True
+                                raise Exception('Erro sintatico identificador Var declaracao na linha '+str(self.tokenAtual().linha))
+                        else:
+                            self.erro = True
+                            raise Exception('Erro sintatico Tipo Var declaracao na linha '+str(self.tokenAtual().linha))
+                        
+                    #saiu do laço, isso significa que encontrou o RBRACK
+                    if(self.tokenAtual().tipo != 'LCBRACK'):
+                        self.indexToken += 1
+                    
+                    if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
+                        self.indexToken += 1
+                        while(self.tokenAtual().tipo != 'RCBRACK'): #verificar caso em que não encontra o RCBRACK
+                            if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):#ponto e virgula seguido de uma chave direita
+                                self.indexToken += 1
+                                break
+                            else:
+                                self.statement()#chamo para verificar os stmts contidos dentro do escopo da função
+                        self.indexToken += 1
+                    else:
+                        self.erro = True
+                        raise Exception('Erro sintatico Chave esquerda do Procedimento declaracao na linha ' + str(self.tokenAtual().linha))
+                else:
+                    self.erro = True
+                    raise Exception('Erro sintatico Parentese esquerdo do Procedimento declaracao na linha ' + str(self.tokenAtual().linha))
+            else:
+                    self.erro = True
+                    raise Exception('Erro sintatico Identificador do Proc declaracao na linha ' + str(self.tokenAtual().linha))
         
         elif (self.tokenAtual().tipo == 'PUTS'):
             self.indexToken +=1

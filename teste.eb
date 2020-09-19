@@ -16,11 +16,16 @@ puts fSum(1,2);
 int vA = 1;
 int vB = 2;
 
-func int fSum(int vC, int vD){
+func int fSum(int vB, int vA){
 	int vX = 0;
 	int vZ = 0;
 	
 	return vUniu;
+}
+
+proc pTeste(int vB, boolean vUniu){
+	boolean vA = true;
+	int vB = 10;
 }
 
 int vW = fSum(1,2);
