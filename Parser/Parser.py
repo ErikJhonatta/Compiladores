@@ -48,7 +48,7 @@ class Parser:
             self.indexToken += 1
             if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
                 self.indexToken += 1
-                if(self.tokenAtual().tipo == 'ID'):#identificador
+                if(self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'f'):#identificador
                     self.indexToken += 1
                     if(self.tokenAtual().tipo == 'LBRACK'):#parentese esquerdo
                         self.indexToken += 1
