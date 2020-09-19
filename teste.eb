@@ -9,3 +9,32 @@ func int fSum(int vC, int vD){
 int vW = fSum(1,2);
 int vU = fSum();
 int vU = vA;
+
+puts 1;
+puts vA;
+puts fSum(1,2);
+puts fSum(1,2);
+puts 1;
+puts vA;
+puts fSum(1,2);
+puts fSum(1,2);
+int vA = 1;
+int vB = 2;
+
+func int fSum(int vC, int vD){
+	int vX = 0;
+	int vZ = 0;
+}
+
+int vW = fSum(1,2);
+int vU = fSum();
+int vU = vA;
+
+puts 1;
+puts vA;
+puts fSum(1,2);
+puts fSum(1,2);
+puts 1;
+puts vA;
+puts fSum(1,2);
+puts fSum(1,2);
