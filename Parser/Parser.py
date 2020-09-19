@@ -119,6 +119,9 @@ class Parser:
                                 self.indexToken += 1
                                 if(self.tokenAtual().tipo == 'COMMA'):
                                     self.indexToken +=1
+                                    if(self.tokenAtual().tipo == 'RBRACK'):
+                                        self.erro = True
+                                        raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
                                 elif(self.tokenAtual().tipo == 'RBRACK'):
                                     break
                                 else:
@@ -132,10 +135,49 @@ class Parser:
                         if(self.tokenAtual().tipo == 'SEMICOLON'):# ponto e virgula no final da declaração do puts
                             self.indexToken +=1
                             return
+                        else:
+                            self.erro = True
+                            raise Exception('Erro sintatico ponto e virgula na linha '+str(self.tokenAtual().linha))
 
             else:
                 self.erro = True
                 raise Exception('Erro sintatico depois do puts na linha ' + str(self.tokenAtual().linha))
+        #Chama de funcao e procedimento
+        elif(self.tokenAtual().tipo == 'ID'):
+            if(self.tokenAtual().lexema[0] == 'f' or self.tokenAtual().lexema[0] == 'p'):
+                self.indexToken +=1
+                if(self.tokenAtual().tipo == 'LBRACK'):
+                    self.indexToken+=1
+                    while(self.tokenAtual().tipo != 'RBRACK'):# verifica argumentos da funcao para ser chamada, nao checa tipos (semantica)
+                        if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
+                            self.indexToken += 1
+                            if(self.tokenAtual().tipo == 'COMMA'):
+                                self.indexToken +=1
+                                if(self.tokenAtual().tipo == 'RBRACK'):
+                                    self.erro = True
+                                    raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
+                            elif(self.tokenAtual().tipo == 'RBRACK'):
+                                self.indexToken +=1
+                                break
+                            else:
+                                self.erro = True
+                                raise Exception('Erro sintatico Virgula na linha ' + str(self.tokenAtual().linha))
+                        else:
+                            self.erro = True
+                            raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
+                    #fora do laço encontrou o RBRACK
+                    if(self.tokenAtual().tipo == 'SEMICOLON'):# ponto e virgula no final da declaração do puts
+                        self.indexToken +=1
+                        return
+                    else:
+                        self.erro = True
+                        raise Exception('Erro sintatico Ponto e Virgula na linha ' + str(self.tokenAtual().linha))
+                else:
+                    self.erro = True
+                    raise Exception('Erro sintatico parentese esquerdo chama de funcao '+str(self.tokenAtual().linha))
+            else:
+                self.erro = True
+                raise Exception('Erro sintatico identificador chamada de funcao ou procedimento '+str(self.tokenAtual().linha))
         else:
             #print(self.tokenAtual())
             self.erro = True
@@ -180,7 +222,7 @@ class Parser:
                                 self.indexToken += 1
                                 if(self.tokenAtual().tipo == 'COMMA'):
                                     self.indexToken +=1
-                                elif(self.tokenAtual().tipo == 'RBRACK'):
+                                elif(self.tokenAtual().tipo == 'RBRACK'):#nao ta incrementando  index igual as outras funcoes, mas ta funcionando
                                     break
                                 else:
                                     self.erro = True
