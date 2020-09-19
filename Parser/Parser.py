@@ -166,7 +166,7 @@ class Parser:
             else:
                     self.erro = True
                     raise Exception('Erro sintatico Identificador do Proc declaracao na linha ' + str(self.tokenAtual().linha))
-        
+        #Puts
         elif (self.tokenAtual().tipo == 'PUTS'):
             self.indexToken +=1
             if(self.tokenAtual().tipo == 'ID' or self.tokenAtual().tipo == 'NUMBER'):
@@ -205,7 +205,7 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico depois do puts na linha ' + str(self.tokenAtual().linha))
-        #Chama de funcao e procedimento
+        #Chamada de funcao e procedimento
         elif(self.tokenAtual().tipo == 'ID'):
             if(self.tokenAtual().lexema[0] == 'f' or self.tokenAtual().lexema[0] == 'p'):
                 self.indexToken +=1
@@ -241,8 +241,47 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico identificador chamada de funcao ou procedimento '+str(self.tokenAtual().linha))
+        #IF
+        elif(self.tokenAtual().tipo == 'IF'):
+            self.indexToken+=1
+            if(self.tokenAtual().tipo == 'LBRACK'):
+                self.indexToken +=1
+                self.condicao()# precisa atualizar o index dentro
+                if(self.tokenAtual().tipo == 'RBRACK'):
+                    self.indexToken +=1
+                    if(self.tokenAtual().tipo == 'LCBRACK'):
+                        self.indexToken +=1
+                        while(self.tokenAtual().tipo != 'RCBRACK'):
+                            self.statement()
+                        #fora do laço, encontrou o RCBRACK
+                        self.indexToken +=1
+                        if(self.tokenAtual().tipo == 'ELSE'):
+                            self.indexToken +=1
+                            if(self.tokenAtual().tipo == 'LCBRACK'):
+                                self.indexToken +=1
+                                while(self.tokenAtual().tipo != 'RCBRACK'):
+                                    self.statement()
+                                self.indexToken +=1
+                            else:
+                                self.erro = True
+                                raise Exception('Erro sintatico chaves esquerda else na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
+            
+                    else:
+                        self.erro = True
+                        raise Exception('Erro sintatico chaves esquerda IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
+            
+                else:
+                    self.erro = True
+                    raise Exception('Erro sintatico parentese direito IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
+             
+            else:
+                self.erro = True
+                raise Exception('Erro sintatico parentese esquerdo IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
+            
         else:
-            #print(self.tokenAtual())
+            if(self.tokenAtual().tipo == 'FIM'):
+                self.erro = True
+                raise Exception('Missing Token na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
             self.erro = True
             raise Exception('Erro sintatico Token fora do statement na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))
     def expression(self):
@@ -264,8 +303,36 @@ class Parser:
             else: #Se tiver simbolo de expressao logica
                 self.indexToken +=1 # Em cima do simbolo logico (op-condicional)
                 if(self.lookAhead().tipo == 'NUMBER' or self.lookAhead().tipo == 'ID'):
-                    self.indexToken +=2 # Passa para o token depois do numero
-                    return
+                    if(self.lookAhead().lexema[0] == 'v'):
+                        self.indexToken +=2
+                        return
+                    elif(self.lookAhead().lexema[0] == 'f'):
+                        self.indexToken +=2 # vai pro token depois do ID da funcao, no caso o parentese
+                        if(self.tokenAtual().tipo == 'LBRACK'):
+                            self.indexToken+=1
+                            while(self.tokenAtual().tipo != 'RBRACK'):
+                                if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
+                                    self.indexToken+=1
+                                    if(self.tokenAtual().tipo == 'COMMA'):
+                                        self.indexToken +=1
+                                        if(self.tokenAtual().tipo == 'RBRACK'):
+                                            self.erro = True
+                                            raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
+                                    elif(self.tokenAtual().tipo == 'RBRACK'):
+                                        self.indexToken +=1
+                                        break
+                                    else:
+                                        self.erro = True
+                                        raise Exception('Erro sintatico Virgula na linha ' + str(self.tokenAtual().linha))
+                                else:
+                                    self.erro = True
+                                    raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
+                        else:
+                            self.erro = True
+                            raise Exception('Erro sintatico chamada de func parentese esquerdo na linha '+str(self.tokenAtual().linha))
+                    else:
+                        self.erro = True
+                        raise Exception('Erro sintatico operacao sem funcao ou variavel '+str(self.tokenAtual().linha))
                 else:
                     self.erro = True
                     raise Exception('Erro sintatico numero op ?, (logical expression) na linha '+str(self.tokenAtual().linha))
@@ -285,7 +352,10 @@ class Parser:
                                 self.indexToken += 1
                                 if(self.tokenAtual().tipo == 'COMMA'):
                                     self.indexToken +=1
-                                elif(self.tokenAtual().tipo == 'RBRACK'):#nao ta incrementando  index igual as outras funcoes, mas ta funcionando
+                                    if(self.tokenAtual().tipo == 'RBRACK'):#nao ta incrementando  index igual as outras funcoes, mas ta funcionando
+                                        self.erro = True
+                                        raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
+                                elif(self.tokenAtual().tipo == 'RBRACK'):
                                     break
                                 else:
                                     self.erro = True
@@ -307,6 +377,17 @@ class Parser:
         else:
             self.erro = True
             raise Exception('Erro sintatico expression '+str(self.tokenAtual().linha))
-        
+
+    def condicao(self):
+        self.expression()
+        self.condicao_aux()
+        return
+    def condicao_aux(self):
+        if(self.tokenAtual().tipo == 'EQUAL' or self.tokenAtual().tipo == 'DIFF' or self.tokenAtual().tipo == 'LESS' or self.tokenAtual().tipo == 'LESSEQUAL' or self.tokenAtual().tipo == 'GREAT' or self.tokenAtual().tipo == 'GREATEQUAL'):
+            self.indexToken +=1
+            self.condicao()
+            return
+        else:
+            return
     def lookAhead(self):
         return self.tabTokens[self.indexToken + 1]
