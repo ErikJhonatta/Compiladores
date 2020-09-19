@@ -380,7 +380,14 @@ class Parser:
 
     def condicao(self):
         self.expression()
+        self.condicao_aux()
         return
-
+    def condicao_aux(self):
+        if(self.tokenAtual().tipo == 'EQUAL' or self.tokenAtual().tipo == 'DIFF' or self.tokenAtual().tipo == 'LESS' or self.tokenAtual().tipo == 'LESSEQUAL' or self.tokenAtual().tipo == 'GREAT' or self.tokenAtual().tipo == 'GREATEQUAL'):
+            self.indexToken +=1
+            self.condicao()
+            return
+        else:
+            return
     def lookAhead(self):
         return self.tabTokens[self.indexToken + 1]
