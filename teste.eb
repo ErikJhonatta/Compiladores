@@ -51,3 +51,11 @@ else{
 	int vB = 5;
 	boolean vX = false;
 }
+
+
+while (vA > vB <> vC == vUniu < 3 <= 5 >= 10){
+	int vC = 10;
+	boolean vU = 4;
+	break;
+	continue;
+}
