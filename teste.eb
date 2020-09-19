@@ -27,8 +27,7 @@ proc pTeste(int vB, boolean vUniu){
 	boolean vA = true;
 	int vB = 10;
 }
-
-int vW = fSum(1,2);
+int vW = fSum(1,2,3);
 int vU = fSum();
 int vU = vA;
 
@@ -43,3 +42,12 @@ puts fSum(1,2,3);
 
 pSum(1);
 fSum(1);
+
+if(1 <> fFunc(1,2)){
+	int vA = 0;
+	boolean vB = true;
+}
+else{
+	int vB = 5;
+	boolean vX = false;
+}
