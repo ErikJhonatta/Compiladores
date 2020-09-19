@@ -19,6 +19,8 @@ int vB = 2;
 func int fSum(int vC, int vD){
 	int vX = 0;
 	int vZ = 0;
+	
+	return vUniu;
 }
 
 int vW = fSum(1,2);
