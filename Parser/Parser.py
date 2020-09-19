@@ -80,6 +80,7 @@ class Parser:
                                     if(self.tokenAtual().tipo == 'ID'):
                                         self.indexToken += 1 
                                         if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):
+                                            self.indexToken += 1
                                             break
                                         else:
                                             self.erro = True
