@@ -23,6 +23,11 @@ func int fSum(int vC, int vD){
 	return vUniu;
 }
 
+proc pTeste(int vC, int vD, int vUniu){
+	int vA = 5;
+	int vB = 10;
+}
+
 int vW = fSum(1,2);
 int vU = fSum();
 int vU = vA;
