@@ -43,12 +43,11 @@ class Parser:
                 raise Exception('Erro sintatico Identificador Var declaracao na linha '+str(self.tokenAtual().linha))
         #TODO: resto das variaveis do statement, fora <var-declaracao>
 
-        #<funcao-declaracao>
         elif(self.tokenAtual().tipo == 'FUNC'):#tipo função
             self.indexToken += 1
             if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
                 self.indexToken += 1
-                if(self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'f'):#identificador
+                if(self.tokenAtual().tipo == 'ID'):#identificador
                     self.indexToken += 1
                     if(self.tokenAtual().tipo == 'LBRACK'):#parentese esquerdo
                         self.indexToken += 1
@@ -78,18 +77,35 @@ class Parser:
                             while(self.tokenAtual().tipo != 'RCBRACK'): #verificar caso em que não encontra o RCBRACK
                                 if(self.tokenAtual().tipo == 'RETURN'):
                                     self.indexToken += 1
-                                    if(self.tokenAtual().tipo == 'ID'):
-                                        self.indexToken += 1 
-                                        if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):
-                                            break
+                                    op = False
+                                    while(self.tokenAtual().tipo != 'RCBRACK'):
+                                        if(op == False):
+                                            if(self.tokenAtual().tipo == 'ID' or self.tokenAtual().tipo == 'NUMBER'):
+                                                self.indexToken += 1
+                                                if(self.tokenAtual().tipo == 'SUM' or self.tokenAtual().tipo == 'SUB' or self.tokenAtual().tipo == 'MUL' or self.tokenAtual().tipo == 'DIV'):
+                                                    op = True
+                                                    self.indexToken += 1    
+                                                elif(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):
+                                                    break
+                                                else:
+                                                    self.erro = True
+                                                    raise Exception('Erro sintatico Retorno Func declaracao na linha '+str(self.tokenAtual().linha))
+                                            else:
+                                                self.erro = True
+                                                raise Exception('Erro sintatico Retorno Func declaracao na linha '+str(self.tokenAtual().linha))
                                         else:
-                                            self.erro = True
-                                            raise Exception('Erro sintatico Retorno Func declaracao na linha '+str(self.tokenAtual().linha))
-                                    else:
-                                        self.erro = True
-                                        raise Exception('Erro sintatico Retorno Func declaracao na linha '+str(self.tokenAtual().linha))
+                                            if(self.tokenAtual().tipo == 'ID' or self.tokenAtual().tipo == 'NUMBER'):
+                                                self.indexToken += 1
+                                                if(self.tokenAtual().tipo == 'SUM' or self.tokenAtual().tipo == 'SUB' or self.tokenAtual().tipo == 'MUL' or self.tokenAtual().tipo == 'DIV'):
+                                                    self.indexToken += 1    
+                                                elif(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):
+                                                    break
+                                                else:
+                                                    self.erro = True
+                                                    raise Exception('Erro sintatico Retorno Func declaracao na linha '+str(self.tokenAtual().linha))   
                                 else:
                                     self.statement()#chamo para verificar os stmts contidos dentro do escopo da função
+                                #fazer parte do RETURN
                             self.indexToken +=1
                             
                         else:
@@ -105,7 +121,6 @@ class Parser:
                 self.erro = True
                 raise Exception('Erro sintatico Tipo da Funcao declaracao na linha ' + str(self.tokenAtual().linha)) 
         
-
         elif (self.tokenAtual().tipo == 'PUTS'):
             self.indexToken +=1
             if(self.tokenAtual().tipo == 'ID' or self.tokenAtual().tipo == 'NUMBER'):
@@ -137,7 +152,7 @@ class Parser:
 
             else:
                 self.erro = True
-                raise Exception('Erro sintatico depois do puts na linha ' + str(self.tokenAtual().linha)
+                raise Exception('Erro sintatico depois do puts na linha ' + str(self.tokenAtual().linha))
         else:
             #print(self.tokenAtual())
             self.erro = True

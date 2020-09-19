@@ -1,17 +1,6 @@
 int vA = 1;
 int vB = 2;
 
-func int fSum(int vC, int vD){
-	int vX = 0;
-	int vZ = 0;
-	int vA = 0;
-	int vB = 0;
-	int vC = 0;
-	int vD = 0;
-	
-	return vUniu;
-}
-
 int vW = fSum(1,2);
 int vU = fSum();
 int vU = vA;
