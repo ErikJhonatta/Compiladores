@@ -277,13 +277,44 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico parentese esquerdo IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
-            
+
+        elif(self.tokenAtual().tipo == 'WHILE'):
+            self.indexToken += 1
+            if(self.tokenAtual().tipo == 'LBRACK'):
+                self.indexToken += 1
+                self.condicao()
+                #print(self.tokenAtual().lexema)
+                if(self.tokenAtual().tipo == 'RBRACK'):
+                    self.indexToken += 1
+                    if(self.tokenAtual().tipo == 'LCBRACK'):
+                        self.indexToken += 1
+                        while(self.tokenAtual().tipo != 'RCBRACK'):
+                            if(self.tokenAtual().tipo == 'BREAK' or self.tokenAtual().tipo == 'CONTINUE'):
+                                self.indexToken += 1
+                                if(self.tokenAtual().tipo == 'SEMICOLON'):
+                                    self.indexToken += 1
+                                else:
+                                    self.erro = True
+                                    raise Exception('Erro sintatico ponto e virgula na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema)) 
+                            else:
+                                self.statement()
+                        self.indexToken += 1
+                    else:
+                        self.erro = True
+                        raise Exception('Erro sintatico chaves esquerda else na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))         
+                else:
+                    self.erro = True
+                    raise Exception('Erro sintatico parentese direito WHILE na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))
+            else:
+                self.erro = True
+                raise Exception('Erro sintatico parentese esquerdo WHILE na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))     
         else:
             if(self.tokenAtual().tipo == 'FIM'):
                 self.erro = True
                 raise Exception('Missing Token na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
             self.erro = True
             raise Exception('Erro sintatico Token fora do statement na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))
+    
     def expression(self):
         if(self.tokenAtual().tipo == 'NUMBER'):#<numero> que pode occorrer só, na aritmetica ou na logica
             if (not (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):# Se nao tiver simbolo de expressao logica
@@ -302,7 +333,9 @@ class Parser:
                         raise Exception('Erro sintatico numero op ?, (arithmetic expression) na linha '+str(self.tokenAtual().linha))
             else: #Se tiver simbolo de expressao logica
                 self.indexToken +=1 # Em cima do simbolo logico (op-condicional)
-                if(self.lookAhead().tipo == 'NUMBER' or self.lookAhead().tipo == 'ID'):
+                if(self.lookAhead().tipo == 'NUMBER'):
+                    pass
+                elif(self.lookAhead().tipo == 'ID'):
                     if(self.lookAhead().lexema[0] == 'v'):
                         self.indexToken +=2
                         return
