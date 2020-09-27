@@ -41,11 +41,12 @@ puts fSum(1,2);
 puts fSum(1,2,3);
 
 pSum(1);
-fSum(1);
+int vX = fSum(1);
 
-if(fSum(1,2) <> fFunc(1,2) < 1){
+if(3 + 3){
 	int vA = 0;
 	boolean vB = true;
+	int vC = 4 + 3;
 }
 else{
 	int vB = 5;
@@ -59,3 +60,12 @@ while (vA > vB <> vC == vUniu < 3 <= 5 >= 10){
 	break;
 	continue;
 }
+
+
+
+
+
+
+
+
+
