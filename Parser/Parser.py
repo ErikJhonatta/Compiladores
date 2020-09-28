@@ -82,9 +82,11 @@ class Parser:
                         
                         if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
                             self.indexToken += 1
+                            encontrouReturn = False
                             while(self.tokenAtual().tipo != 'RCBRACK'): #verificar caso em que não encontra o RCBRACK
                                 if(self.tokenAtual().tipo == 'RETURN'):
                                     self.indexToken += 1
+                                    encontrouReturn = True
                                     if(self.tokenAtual().tipo == 'ID'):#identificador
                                         self.indexToken += 1 
                                         if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):#ponto e virgula seguido de uma chave direita
@@ -98,7 +100,13 @@ class Parser:
                                         raise Exception('Erro sintatico Retorno Func declaracao na linha '+str(self.tokenAtual().linha))
                                 else:
                                     self.statement()#chamo para verificar os stmts contidos dentro do escopo da função
+                            
+                            if(encontrouReturn == False):
+                                self.erro = True
+                                raise Exception('Erro sintatico no retorno da função na linha '+str(self.tokenAtual().linha - 1))
+                            
                             self.indexToken +=1
+
                         else:
                             self.erro = True
                             raise Exception('Erro sintatico Chave esquerda da Funcao declaracao na linha ' + str(self.tokenAtual().linha))

@@ -1,0 +1,12 @@
+while(vA < vT){
+	boolean vB = true;
+	int vA = 10;
+	if(fSum(1,2) == vA){
+		if(vB <> false){
+			int vUniu = 20;
+			while(vUniu == 30){
+				boolean vBool = false;
+			}
+		}
+	}
+}
