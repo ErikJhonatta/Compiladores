@@ -1,18 +1,24 @@
+from Parser.Escopo import Escopo
 class Parser:
     def __init__(self, tabTokens):
         self.tabTokens = tabTokens
         self.indexToken = 0
         self.erro = False
-    
+        self.listaEscopos = []
+        self.indexEscopoAtual = -1
+        self.tabSimbolos = []
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
 
     def start(self):
+        escopoInicial = Escopo(self.indexEscopoAtual+1,self.indexEscopoAtual)
+        self.listaEscopos.append(escopoInicial)
         self.statement_list()
         return
 
     def statement_list(self):
         if(self.tokenAtual().tipo == "FIM"):
+            self.listaEscopos[0].fechar()
             return
         else:
             self.statement()
