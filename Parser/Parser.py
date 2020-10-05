@@ -1,4 +1,5 @@
 from Parser.Escopo import Escopo
+import re
 class Parser:
     def __init__(self, tabTokens):
         self.tabTokens = tabTokens
@@ -7,6 +8,7 @@ class Parser:
         self.listaEscopos = []
         self.indexEscopoAtual = -1
         self.tabSimbolos = []
+        self.indexDecVarAtual = -1 #Pra saber na semantica qual declaracao de variavel no codigo tá sendo checada
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
 
@@ -28,16 +30,23 @@ class Parser:
     def statement(self):
         #<var-declaracao>
         if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
+            temp = []
+            temp.append('VAR')
+            temp.append(self.tokenAtual().tipo)
             self.indexToken +=1
             if(self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'v'):#identificador var
+                temp.append(self.tokenAtual().lexema)
                 self.indexToken +=1
                 if(self.tokenAtual().tipo == 'ATTR'):#atribuicao
                     self.indexToken +=1
                     #Expression
-                    self.expression()
+                    temp.append(self.expression())
                     if(self.tokenAtual().tipo == 'SEMICOLON'):
                         self.indexToken +=1
-                        return #VERIFICAR
+                        self.tabSimbolos.append(temp)
+                        print(temp)
+                        if(self.checkSemantica('VARDEC',self.indexDecVarAtual)):
+                            return
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico Ponto e virgula Var declaracao na linha '+str(self.tokenAtual().linha))
@@ -47,7 +56,7 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico Identificador Var declaracao na linha '+str(self.tokenAtual().linha))
-        
+            
         #<funcao-declaracao>
         elif(self.tokenAtual().tipo == 'FUNC'):#tipo função
             self.indexToken += 1
@@ -335,13 +344,17 @@ class Parser:
                 #checa simbolo de op aritmetica
                 if(not (self.lookAhead().tipo == 'SUM' or self.lookAhead().tipo == 'SUB' or self.lookAhead().tipo == 'DIV' or self.lookAhead().tipo == 'MUL')):#Se nao tiver simbolo de expressao aritmetica
                     #Entra aqui se for apenas numero
+                    val = self.tokenAtual().lexema
                     self.indexToken +=1
-                    return
+                    return val
                 else:#Se tiver simbolo aritmetico
+                    aritExpr = str(self.tokenAtual().lexema)
                     self.indexToken+=1 # Em cima do simbolo aritmetico
-                    if(self.lookAhead().tipo == 'NUMBER' or self.lookAhead().tipo == 'ID'):
+                    aritExpr+=str(self.tokenAtual().lexema)
+                    if(self.lookAhead().tipo == 'NUMBER' or (self.lookAhead().tipo == 'ID' and (self.lookAhead().lexema[0] == 'v' or self.lookAhead().lexema[0] == 'f'))):
+                        aritExpr+=str(self.lookAhead().lexema) ### funcionando para numero e numer apenas
                         self.indexToken +=2 #Token depois do numero
-                        return
+                        return aritExpr
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico numero op ?, (arithmetic expression) na linha '+str(self.tokenAtual().linha))
@@ -385,8 +398,9 @@ class Parser:
                     raise Exception('Erro sintatico numero op ?, (logical expression) na linha '+str(self.tokenAtual().linha))
         
         elif(self.tokenAtual().tipo == 'BOOLEAN'):# Se a expressão for só um boolean
+            val = self.tokenAtual().lexema
             self.indexToken +=1
-            return
+            return val
 
         elif(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
             if(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
@@ -438,3 +452,20 @@ class Parser:
             return
     def lookAhead(self):
         return self.tabTokens[self.indexToken + 1]
+    def checkSemantica(self,tipo,index):#checa semantica, se tiver tudo OK return True
+        if(tipo == 'VARDEC'): # checa semantica de declaração de Variável
+            simbAtual = self.tabSimbolos[index]
+            if(simbAtual[1] == 'INT'):
+                if(simbAtual[3].isnumeric() or bool(re.match("[0-9A-Za-a]*( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*",simbAtual[3]))):
+                    return True
+                else:
+                    #linha do ponto e virgula que é a mesma
+                    raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha))
+            if(simbAtual[1] == 'TBOOLEAN'):
+                if(simbAtual[3] == 'true' or simbAtual[3] == 'false'):
+                    return True
+                else:
+                    #linha do ponto e virgula que é a mesma
+                    raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha))
+        self.indexDecVarAtual +=1
+        #elif(outros tipos)
