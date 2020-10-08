@@ -354,6 +354,11 @@ class Parser:
                     if(self.lookAhead().tipo == 'NUMBER' or (self.lookAhead().tipo == 'ID' and (self.lookAhead().lexema[0] == 'v' or self.lookAhead().lexema[0] == 'f'))):
                         aritExpr+=str(self.lookAhead().lexema) ### funcionando para numero e numer apenas
                         self.indexToken +=2 #Token depois do numero
+                        #Mais de um termo na expressao, entra nesse if
+                        if(self.tokenAtual().tipo == 'SUM' or self.tokenAtual().tipo == 'SUB' or self.tokenAtual().tipo == 'DIV' or self.tokenAtual().tipo == 'MUL'):
+                            aritExpr += self.tokenAtual().lexema
+                            self.indexToken += 1
+                            aritExpr += self.expression()
                         return aritExpr
                     else:
                         self.erro = True
