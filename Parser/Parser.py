@@ -470,15 +470,17 @@ class Parser:
             simbAtual = self.tabSimbolos[index]
             if(simbAtual[1] == 'INT'):
                 if(simbAtual[3].isnumeric() or bool(re.match("[0-9A-Za-a]*( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*",simbAtual[3]))):
+                    self.indexDecVarAtual +=1
                     return True
                 else:
                     #linha do ponto e virgula que é a mesma
                     raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha))
             if(simbAtual[1] == 'TBOOLEAN'):
                 if(simbAtual[3] == 'true' or simbAtual[3] == 'false'):
+                    self.indexDecVarAtual +=1
                     return True
                 else:
                     #linha do ponto e virgula que é a mesma
                     raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha))
-        self.indexDecVarAtual +=1
+        
         #elif(outros tipos)
