@@ -13,7 +13,9 @@ class Parser:
         return self.tabTokens[self.indexToken]
 
     def start(self):
-        escopoInicial = Escopo(self.indexEscopoAtual+1,self.indexEscopoAtual)
+        escopoPai = self.indexEscopoAtual
+        self.indexEscopoAtual += 1
+        escopoInicial = Escopo(self.indexEscopoAtual,escopoPai)
         self.listaEscopos.append(escopoInicial)
         self.statement_list()
         return
@@ -21,6 +23,7 @@ class Parser:
     def statement_list(self):
         if(self.tokenAtual().tipo == "FIM"):
             self.listaEscopos[0].fechar()
+            print(self.listaEscopos[0])
             return
         else:
             self.statement()
@@ -43,6 +46,7 @@ class Parser:
                     temp.append(self.expression())
                     if(self.tokenAtual().tipo == 'SEMICOLON'):
                         self.indexToken +=1
+                        #temp.append()
                         self.tabSimbolos.append(temp)
                         print(temp)
                         if(self.checkSemantica('VARDEC',self.indexDecVarAtual)):
