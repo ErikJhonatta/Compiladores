@@ -8,7 +8,7 @@ class Parser:
         self.listaEscopos = []
         self.indexEscopoAtual = -1
         self.tabSimbolos = []
-        self.indexDecVarAtual = -1 #Pra saber na semantica qual declaracao de variavel no codigo tá sendo checada
+        self.indexDecVarAtual = 0 #Pra saber na semantica qual declaracao de variavel no codigo tá sendo checada
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
 
@@ -46,7 +46,7 @@ class Parser:
                     temp.append(self.expression())
                     if(self.tokenAtual().tipo == 'SEMICOLON'):
                         self.indexToken +=1
-                        #temp.append()
+                        temp.append(self.indexEscopoAtual)
                         self.tabSimbolos.append(temp)
                         print(temp)
                         if(self.checkSemantica('VARDEC',self.indexDecVarAtual)):
