@@ -195,39 +195,14 @@ class Parser:
         #Puts
         elif (self.tokenAtual().tipo == 'PUTS'):
             self.indexToken +=1
-            if(self.tokenAtual().tipo == 'ID' or self.tokenAtual().tipo == 'NUMBER'):
+            if((self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'v') or self.tokenAtual().tipo == 'NUMBER'):
                 self.indexToken+=1
                 if(self.tokenAtual().tipo == 'SEMICOLON'):# se for um numero ou var o proximo token vai ser esse semicolon
                     self.indexToken += 1
                     return
                 else:
-                    if(self.tokenAtual().tipo == 'LBRACK'):
-                        self.indexToken+=1
-                        while(self.tokenAtual().tipo != 'RBRACK'):# verifica argumentos da funcao para ser chamada, nao checa tipos (semantica)
-                            if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
-                                self.indexToken += 1
-                                if(self.tokenAtual().tipo == 'COMMA'):
-                                    self.indexToken +=1
-                                    if(self.tokenAtual().tipo == 'RBRACK'):
-                                        self.erro = True
-                                        raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
-                                elif(self.tokenAtual().tipo == 'RBRACK'):
-                                    break
-                                else:
-                                    self.erro = True
-                                    raise Exception('Erro sintatico Virgula na linha ' + str(self.tokenAtual().linha))
-                            else:
-                                self.erro = True
-                                raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
-                        #fora do laço encontrou o RBRACK
-                        self.indexToken+=1
-                        if(self.tokenAtual().tipo == 'SEMICOLON'):# ponto e virgula no final da declaração do puts
-                            self.indexToken +=1
-                            return
-                        else:
-                            self.erro = True
-                            raise Exception('Erro sintatico ponto e virgula na linha '+str(self.tokenAtual().linha))
-
+                    self.erro = True
+                    raise Exception('Erro sintatico ponto e virgula no puts na linha ' + str(self.tokenAtual().linha))
             else:
                 self.erro = True
                 raise Exception('Erro sintatico depois do puts na linha ' + str(self.tokenAtual().linha))
