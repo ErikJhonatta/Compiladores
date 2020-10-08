@@ -458,7 +458,7 @@ class Parser:
         if(tipo == 'VARDEC'): # checa semantica de declaração de Variável
             simbAtual = self.tabSimbolos[index]
             if(simbAtual[1] == 'INT'):
-                if(simbAtual[3].isnumeric() or bool(re.match("[0-9A-Za-a]*( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*",simbAtual[3]))):
+                if(simbAtual[3].isnumeric() or bool(re.match(r"[0-9A-Za-z]*\({0,}( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",simbAtual[3]))):
                     self.indexDecVarAtual +=1
                     return True
                 else:
