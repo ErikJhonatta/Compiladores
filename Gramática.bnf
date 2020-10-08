@@ -70,7 +70,7 @@
             | <numero>
             | <boolean>
             | <identificador-func> "(" <lista-parametros> ")"
-            | <identificador-var>
+            | <identificador-var> ";"
 
 <logical-expression> ::= <termo> <op-condicional> <termo>
 

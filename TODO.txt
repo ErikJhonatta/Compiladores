@@ -1,0 +1,4 @@
+Semantico
+Função pra verificar se a funcao que ta atribuindo pra uma var existe e se o tipo bate
+Ex: int vA = fSum(1,2);
+ --Ver se fSum existe e retorna int

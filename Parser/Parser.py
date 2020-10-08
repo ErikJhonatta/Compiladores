@@ -315,7 +315,7 @@ class Parser:
                 raise Exception('Missing Token na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
             self.erro = True
             raise Exception('Erro sintatico Token fora do statement na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))
-    
+    #deve retornar o valor das expressoes, pra salvar na tabela de simbolos
     def expression(self):
         if(self.tokenAtual().tipo == 'NUMBER'):#<numero> que pode occorrer só, na aritmetica ou na logica
             if (not (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):# Se nao tiver simbolo de expressao logica
@@ -393,18 +393,23 @@ class Parser:
         elif(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
             if(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
                 if(self.tokenAtual().lexema[0] == 'f'):# se for uma funcao
+                    funcExpr = str(self.tokenAtual().lexema)
                     self.indexToken+=1
                     if(self.tokenAtual().tipo == 'LBRACK'):
+                        funcExpr += str(self.tokenAtual().lexema)
                         self.indexToken +=1
                         while(self.tokenAtual().tipo != 'RBRACK'):# verifica argumentos da funcao para ser chamada, nao checa tipos (semantica)
                             if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
+                                funcExpr += str(self.tokenAtual().lexema)
                                 self.indexToken += 1
                                 if(self.tokenAtual().tipo == 'COMMA'):
+                                    funcExpr += str(self.tokenAtual().lexema)
                                     self.indexToken +=1
                                     if(self.tokenAtual().tipo == 'RBRACK'):#nao ta incrementando  index igual as outras funcoes, mas ta funcionando
                                         self.erro = True
                                         raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
                                 elif(self.tokenAtual().tipo == 'RBRACK'):
+                                    funcExpr += str(self.tokenAtual().lexema)
                                     break
                                 else:
                                     self.erro = True
@@ -414,12 +419,14 @@ class Parser:
                                 raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
                         #fora do laço encontrou o RBRACK
                         self.indexToken+=1
+                        return funcExpr
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico Parentese esquerdo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
                 else:#é uma variavel
+                    varExpr = str(self.tokenAtual().lexema)
                     self.indexToken +=1
-                    return
+                    return varExpr
             else:
                 self.erro = True
                 raise Exception('Erro sintatico, id nao comeca com f ou v '+str(self.tokenAtual().linha))
@@ -440,6 +447,13 @@ class Parser:
             return
     def lookAhead(self):
         return self.tabTokens[self.indexToken + 1]
+
+    #Estrutura da Tabela de Simbolos
+    #idx 0 - tipo do comando: VAR, FUNC, PUTS
+    #idx 1 - tipo da var ou do retorno de funcao, ou do que o Puts ta printando: INT, TBOOLEAN
+    #idx 2 - identificador da func ou da var: vA, fSum
+    #idx 3 - valor da var, retorno da func etc: 1+2+3
+    #idx 4 - escopo onde aquela var ou func tá - self.indexEscopoAtual
     def checkSemantica(self,tipo,index):#checa semantica, se tiver tudo OK return True
         if(tipo == 'VARDEC'): # checa semantica de declaração de Variável
             simbAtual = self.tabSimbolos[index]
