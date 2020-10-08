@@ -23,7 +23,6 @@ class Parser:
     def statement_list(self):
         if(self.tokenAtual().tipo == "FIM"):
             self.listaEscopos[0].fechar()
-            print(self.listaEscopos[0])
             return
         else:
             self.statement()
@@ -367,10 +366,15 @@ class Parser:
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico numero op ?, (arithmetic expression) na linha '+str(self.tokenAtual().linha))
-            else: #Se tiver simbolo de expressao logica
+            else: #Se tiver simbolo de expressao logica, logica so permite 2 termos
+                logicExpr = str(self.tokenAtual().lexema)
                 self.indexToken +=1 # Em cima do simbolo logico (op-condicional)
+                logicExpr+=str(self.tokenAtual().lexema)
+
                 if(self.lookAhead().tipo == 'NUMBER'):
-                    pass
+                    logicExpr += str(self.lookAhead().lexema)
+                    self.indexToken+=2
+                    return logicExpr
                 elif(self.lookAhead().tipo == 'ID'):
                     if(self.lookAhead().lexema[0] == 'v'):
                         self.indexToken +=2
