@@ -80,7 +80,7 @@
 
 <termo-aritmetico> ::= <fator> *{ ( "*" | "/" ) <fator> }
 
-<fator> ::= <identificador-var> | <numero> | <arithmetic-expression>
+<fator> ::= <identificador-var> | <numero> | "(" <arithmetic-expression> ")"
 
 <condicao> ::= <expression> <condicao-aux>
 <condicao-aux> ::= <op-condicional> <condicao> | ε
