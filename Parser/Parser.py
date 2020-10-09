@@ -352,35 +352,12 @@ class Parser:
                     return logicExpr
                 elif(self.lookAhead().tipo == 'ID'):
                     if(self.lookAhead().lexema[0] == 'v'):
+                        logicExpr += str(self.lookAhead().lexema)
                         self.indexToken +=2
-                        return
-                    elif(self.lookAhead().lexema[0] == 'f'):
-                        self.indexToken +=2 # vai pro token depois do ID da funcao, no caso o parentese
-                        if(self.tokenAtual().tipo == 'LBRACK'):
-                            self.indexToken+=1
-                            while(self.tokenAtual().tipo != 'RBRACK'):
-                                if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
-                                    self.indexToken+=1
-                                    if(self.tokenAtual().tipo == 'COMMA'):
-                                        self.indexToken +=1
-                                        if(self.tokenAtual().tipo == 'RBRACK'):
-                                            self.erro = True
-                                            raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
-                                    elif(self.tokenAtual().tipo == 'RBRACK'):
-                                        self.indexToken +=1
-                                        break
-                                    else:
-                                        self.erro = True
-                                        raise Exception('Erro sintatico Virgula na linha ' + str(self.tokenAtual().linha))
-                                else:
-                                    self.erro = True
-                                    raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
-                        else:
-                            self.erro = True
-                            raise Exception('Erro sintatico chamada de func parentese esquerdo na linha '+str(self.tokenAtual().linha))
+                        return logicExpr
                     else:
                         self.erro = True
-                        raise Exception('Erro sintatico operacao sem funcao ou variavel '+str(self.tokenAtual().linha))
+                        raise Exception('Erro sintatico operacao sem variavel '+str(self.tokenAtual().linha))
                 else:
                     self.erro = True
                     raise Exception('Erro sintatico numero op ?, (logical expression) na linha '+str(self.tokenAtual().linha))
@@ -468,8 +445,20 @@ class Parser:
                 if(simbAtual[3] == 'true' or simbAtual[3] == 'false'):
                     self.indexDecVarAtual +=1
                     return True
+                elif(self.checkValBool(simbAtual[3])):
+                    self.indexDecVarAtual +=1
+                    return True
+
                 else:
                     #linha do ponto e virgula que é a mesma
                     raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha))
         
         #elif(outros tipos)
+    def checkValBool(self, string):
+        #checa se é numero, variavel ou expressao aritmetica ou retorno de funcao | ideia que se for diferente de 0 é true
+        if(string.isnumeric() or bool(re.match(r"[0-9A-Za-z]*\({0,}( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",string))):
+            return True
+        #expressao logica, so checo o primeiro char apos o numero
+        #expressoes logicas pela gramatica so tem 2 termos 1 < 2 e nao 1 < 2 < 3
+        if(string[1] == '<' or string[1] == '=' or string[1] == '>'):
+            return True
