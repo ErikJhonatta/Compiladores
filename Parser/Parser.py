@@ -8,7 +8,8 @@ class Parser:
         self.listaEscopos = []
         self.indexEscopoAtual = -1
         self.tabSimbolos = []
-        self.indexDecVarAtual = 0 #Pra saber na semantica qual declaracao de variavel no codigo tá sendo checada
+        self.indexDecAtual = 0 #Pra saber na semantica qual declaracao no codigo tá sendo checada
+                               #seja, variavel, funcao, procedimento e etc
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
 
@@ -48,7 +49,7 @@ class Parser:
                         temp.append(self.indexEscopoAtual)
                         self.tabSimbolos.append(temp)
                         print(temp)
-                        if(self.checkSemantica('VARDEC',self.indexDecVarAtual)):
+                        if(self.checkSemantica('VARDEC',self.indexDecAtual)):
                             return
                     else:
                         self.erro = True
@@ -436,17 +437,17 @@ class Parser:
             simbAtual = self.tabSimbolos[index]
             if(simbAtual[1] == 'INT'):
                 if(simbAtual[3].isnumeric() or bool(re.match(r"[0-9A-Za-z]*\({0,}( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",simbAtual[3]))):
-                    self.indexDecVarAtual +=1
+                    self.indexDecAtual +=1
                     return True
                 else:
                     #linha do ponto e virgula que é a mesma
                     raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha))
             if(simbAtual[1] == 'TBOOLEAN'):
                 if(simbAtual[3] == 'true' or simbAtual[3] == 'false'):
-                    self.indexDecVarAtual +=1
+                    self.indexDecAtual +=1
                     return True
                 elif(self.checkValBool(simbAtual[3])):
-                    self.indexDecVarAtual +=1
+                    self.indexDecAtual +=1
                     return True
 
                 else:
