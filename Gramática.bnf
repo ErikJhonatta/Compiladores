@@ -59,7 +59,6 @@
             #     }
             # }                                                                           
             | "puts" <identificador-var>";"                                                                                                    
-            | "puts" <identificador-func>";" #nao pede na lista                                                                              
             | "puts" <numero>";"
             | <identificador-func> "(" <lista-parametros> ")"";" #Chama função
             | <identificador-proc> "(" <lista-parametros> ")"";" #Chama procedimento
@@ -71,11 +70,11 @@
             | <numero>
             | <boolean>
             | <identificador-func> "(" <lista-parametros> ")"
-            | <identificador-var>
+            | <identificador-var> ";"
 
 <logical-expression> ::= <termo> <op-condicional> <termo>
 
-<termo> ::= <identificador-var> | <numero> | <identificador-func>
+<termo> ::= <identificador-var> | <numero>
 
 <arithmetic-expression> ::= <termo-aritmetico> *{( "+" | "-" ) <termo-aritmetico>}
 

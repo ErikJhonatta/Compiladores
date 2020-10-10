@@ -1,0 +1,17 @@
+int vA = 1 < 2;
+int vA = 1 < vB;
+
+int vZ = 1 + 2 * 3 / 4;
+int vZ = 1 + vA * 3 / 4;
+
+int vX = 1;
+
+boolean vW = true;
+boolean vW = 1 < 2;
+boolean vW = 1 < vX;
+
+int vQ = vA;
+
+int vX = fSum(1,2);
+
+boolean vW = fBool(5);

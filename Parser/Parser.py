@@ -1,4 +1,5 @@
 from Parser.Escopo import Escopo
+import re
 class Parser:
     def __init__(self, tabTokens):
         self.tabTokens = tabTokens
@@ -7,11 +8,15 @@ class Parser:
         self.listaEscopos = []
         self.indexEscopoAtual = -1
         self.tabSimbolos = []
+        self.indexDecAtual = 0 #Pra saber na semantica qual declaracao no codigo tá sendo checada
+                               #seja, variavel, funcao, procedimento e etc
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
 
     def start(self):
-        escopoInicial = Escopo(self.indexEscopoAtual+1,self.indexEscopoAtual)
+        escopoPai = self.indexEscopoAtual
+        self.indexEscopoAtual += 1
+        escopoInicial = Escopo(self.indexEscopoAtual,escopoPai)
         self.listaEscopos.append(escopoInicial)
         self.statement_list()
         return
@@ -28,16 +33,24 @@ class Parser:
     def statement(self):
         #<var-declaracao>
         if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
+            temp = []
+            temp.append('VAR')
+            temp.append(self.tokenAtual().tipo)
             self.indexToken +=1
             if(self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'v'):#identificador var
+                temp.append(self.tokenAtual().lexema)
                 self.indexToken +=1
                 if(self.tokenAtual().tipo == 'ATTR'):#atribuicao
                     self.indexToken +=1
                     #Expression
-                    self.expression()
+                    temp.append(self.expression())
                     if(self.tokenAtual().tipo == 'SEMICOLON'):
                         self.indexToken +=1
-                        return #VERIFICAR
+                        temp.append(self.indexEscopoAtual)
+                        self.tabSimbolos.append(temp)
+                        print(temp)
+                        if(self.checkSemantica('VARDEC',self.indexDecAtual)):
+                            return
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico Ponto e virgula Var declaracao na linha '+str(self.tokenAtual().linha))
@@ -47,7 +60,7 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico Identificador Var declaracao na linha '+str(self.tokenAtual().linha))
-        
+            
         #<funcao-declaracao>
         elif(self.tokenAtual().tipo == 'FUNC'):#tipo função
             self.indexToken += 1
@@ -183,39 +196,14 @@ class Parser:
         #Puts
         elif (self.tokenAtual().tipo == 'PUTS'):
             self.indexToken +=1
-            if(self.tokenAtual().tipo == 'ID' or self.tokenAtual().tipo == 'NUMBER'):
+            if((self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'v') or self.tokenAtual().tipo == 'NUMBER'):
                 self.indexToken+=1
                 if(self.tokenAtual().tipo == 'SEMICOLON'):# se for um numero ou var o proximo token vai ser esse semicolon
                     self.indexToken += 1
                     return
                 else:
-                    if(self.tokenAtual().tipo == 'LBRACK'):
-                        self.indexToken+=1
-                        while(self.tokenAtual().tipo != 'RBRACK'):# verifica argumentos da funcao para ser chamada, nao checa tipos (semantica)
-                            if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
-                                self.indexToken += 1
-                                if(self.tokenAtual().tipo == 'COMMA'):
-                                    self.indexToken +=1
-                                    if(self.tokenAtual().tipo == 'RBRACK'):
-                                        self.erro = True
-                                        raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
-                                elif(self.tokenAtual().tipo == 'RBRACK'):
-                                    break
-                                else:
-                                    self.erro = True
-                                    raise Exception('Erro sintatico Virgula na linha ' + str(self.tokenAtual().linha))
-                            else:
-                                self.erro = True
-                                raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
-                        #fora do laço encontrou o RBRACK
-                        self.indexToken+=1
-                        if(self.tokenAtual().tipo == 'SEMICOLON'):# ponto e virgula no final da declaração do puts
-                            self.indexToken +=1
-                            return
-                        else:
-                            self.erro = True
-                            raise Exception('Erro sintatico ponto e virgula na linha '+str(self.tokenAtual().linha))
-
+                    self.erro = True
+                    raise Exception('Erro sintatico ponto e virgula no puts na linha ' + str(self.tokenAtual().linha))
             else:
                 self.erro = True
                 raise Exception('Erro sintatico depois do puts na linha ' + str(self.tokenAtual().linha))
@@ -328,81 +316,78 @@ class Parser:
                 raise Exception('Missing Token na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
             self.erro = True
             raise Exception('Erro sintatico Token fora do statement na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))
-    
+    #deve retornar o valor das expressoes, pra salvar na tabela de simbolos
     def expression(self):
         if(self.tokenAtual().tipo == 'NUMBER'):#<numero> que pode occorrer só, na aritmetica ou na logica
             if (not (self.lookAhead().tipo == 'EQUAL' or self.lookAhead().tipo == 'DIFF' or self.lookAhead().tipo == 'LESS' or self.lookAhead().tipo == 'LESSEQUAL' or self.lookAhead().tipo == 'GREAT' or self.lookAhead().tipo == 'GREATEQUAL')):# Se nao tiver simbolo de expressao logica
                 #checa simbolo de op aritmetica
                 if(not (self.lookAhead().tipo == 'SUM' or self.lookAhead().tipo == 'SUB' or self.lookAhead().tipo == 'DIV' or self.lookAhead().tipo == 'MUL')):#Se nao tiver simbolo de expressao aritmetica
                     #Entra aqui se for apenas numero
+                    val = self.tokenAtual().lexema
                     self.indexToken +=1
-                    return
+                    return val
                 else:#Se tiver simbolo aritmetico
+                    aritExpr = str(self.tokenAtual().lexema)
                     self.indexToken+=1 # Em cima do simbolo aritmetico
-                    if(self.lookAhead().tipo == 'NUMBER' or self.lookAhead().tipo == 'ID'):
+                    aritExpr+=str(self.tokenAtual().lexema)
+                    if(self.lookAhead().tipo == 'NUMBER' or (self.lookAhead().tipo == 'ID' and (self.lookAhead().lexema[0] == 'v' or self.lookAhead().lexema[0] == 'f'))):
+                        aritExpr+=str(self.lookAhead().lexema) ### funcionando para numero e numer apenas
                         self.indexToken +=2 #Token depois do numero
-                        return
+                        #Mais de um termo na expressao, entra nesse if
+                        if(self.tokenAtual().tipo == 'SUM' or self.tokenAtual().tipo == 'SUB' or self.tokenAtual().tipo == 'DIV' or self.tokenAtual().tipo == 'MUL'):
+                            aritExpr += self.tokenAtual().lexema
+                            self.indexToken += 1
+                            aritExpr += self.expression()
+                        return aritExpr
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico numero op ?, (arithmetic expression) na linha '+str(self.tokenAtual().linha))
-            else: #Se tiver simbolo de expressao logica
+            else: #Se tiver simbolo de expressao logica, logica so permite 2 termos
+                logicExpr = str(self.tokenAtual().lexema)
                 self.indexToken +=1 # Em cima do simbolo logico (op-condicional)
+                logicExpr+=str(self.tokenAtual().lexema)
+
                 if(self.lookAhead().tipo == 'NUMBER'):
-                    pass
+                    logicExpr += str(self.lookAhead().lexema)
+                    self.indexToken+=2
+                    return logicExpr
                 elif(self.lookAhead().tipo == 'ID'):
                     if(self.lookAhead().lexema[0] == 'v'):
+                        logicExpr += str(self.lookAhead().lexema)
                         self.indexToken +=2
-                        return
-                    elif(self.lookAhead().lexema[0] == 'f'):
-                        self.indexToken +=2 # vai pro token depois do ID da funcao, no caso o parentese
-                        if(self.tokenAtual().tipo == 'LBRACK'):
-                            self.indexToken+=1
-                            while(self.tokenAtual().tipo != 'RBRACK'):
-                                if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
-                                    self.indexToken+=1
-                                    if(self.tokenAtual().tipo == 'COMMA'):
-                                        self.indexToken +=1
-                                        if(self.tokenAtual().tipo == 'RBRACK'):
-                                            self.erro = True
-                                            raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
-                                    elif(self.tokenAtual().tipo == 'RBRACK'):
-                                        self.indexToken +=1
-                                        break
-                                    else:
-                                        self.erro = True
-                                        raise Exception('Erro sintatico Virgula na linha ' + str(self.tokenAtual().linha))
-                                else:
-                                    self.erro = True
-                                    raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
-                        else:
-                            self.erro = True
-                            raise Exception('Erro sintatico chamada de func parentese esquerdo na linha '+str(self.tokenAtual().linha))
+                        return logicExpr
                     else:
                         self.erro = True
-                        raise Exception('Erro sintatico operacao sem funcao ou variavel '+str(self.tokenAtual().linha))
+                        raise Exception('Erro sintatico operacao sem variavel '+str(self.tokenAtual().linha))
                 else:
                     self.erro = True
                     raise Exception('Erro sintatico numero op ?, (logical expression) na linha '+str(self.tokenAtual().linha))
         
         elif(self.tokenAtual().tipo == 'BOOLEAN'):# Se a expressão for só um boolean
+            val = self.tokenAtual().lexema
             self.indexToken +=1
-            return
+            return val
 
         elif(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
             if(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
                 if(self.tokenAtual().lexema[0] == 'f'):# se for uma funcao
+                    funcExpr = str(self.tokenAtual().lexema)
                     self.indexToken+=1
                     if(self.tokenAtual().tipo == 'LBRACK'):
+                        funcExpr += str(self.tokenAtual().lexema)
                         self.indexToken +=1
                         while(self.tokenAtual().tipo != 'RBRACK'):# verifica argumentos da funcao para ser chamada, nao checa tipos (semantica)
                             if(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'BOOLEAN' or self.tokenAtual().lexema[0] == 'v'):#verifica se foi passado numero, boolean, ou variavel
+                                funcExpr += str(self.tokenAtual().lexema)
                                 self.indexToken += 1
                                 if(self.tokenAtual().tipo == 'COMMA'):
+                                    funcExpr += str(self.tokenAtual().lexema)
                                     self.indexToken +=1
                                     if(self.tokenAtual().tipo == 'RBRACK'):#nao ta incrementando  index igual as outras funcoes, mas ta funcionando
                                         self.erro = True
                                         raise Exception('Erro sintatico falta de argumentos na linha ' + str(self.tokenAtual().linha))
                                 elif(self.tokenAtual().tipo == 'RBRACK'):
+                                    funcExpr += str(self.tokenAtual().lexema)
                                     break
                                 else:
                                     self.erro = True
@@ -412,12 +397,14 @@ class Parser:
                                 raise Exception('Erro sintatico argumento invalido na linha ' + str(self.tokenAtual().linha))
                         #fora do laço encontrou o RBRACK
                         self.indexToken+=1
+                        return funcExpr
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico Parentese esquerdo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
                 else:#é uma variavel
+                    varExpr = str(self.tokenAtual().lexema)
                     self.indexToken +=1
-                    return
+                    return varExpr
             else:
                 self.erro = True
                 raise Exception('Erro sintatico, id nao comeca com f ou v '+str(self.tokenAtual().linha))
@@ -438,3 +425,41 @@ class Parser:
             return
     def lookAhead(self):
         return self.tabTokens[self.indexToken + 1]
+
+    #Estrutura da Tabela de Simbolos
+    #idx 0 - tipo do comando: VAR, FUNC, PUTS
+    #idx 1 - tipo da var ou do retorno de funcao, ou do que o Puts ta printando: INT, TBOOLEAN
+    #idx 2 - identificador da func ou da var: vA, fSum
+    #idx 3 - valor da var, retorno da func etc: 1+2+3
+    #idx 4 - escopo onde aquela var ou func tá - self.indexEscopoAtual
+    def checkSemantica(self,tipo,index):#checa semantica, se tiver tudo OK return True
+        if(tipo == 'VARDEC'): # checa semantica de declaração de Variável
+            simbAtual = self.tabSimbolos[index]
+            if(simbAtual[1] == 'INT'):
+                if(simbAtual[3].isnumeric() or bool(re.match(r"[0-9A-Za-z]*\({0,}( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",simbAtual[3]))):
+                    self.indexDecAtual +=1
+                    return True
+                else:
+                    #linha do ponto e virgula que é a mesma
+                    raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha))
+            if(simbAtual[1] == 'TBOOLEAN'):
+                if(simbAtual[3] == 'true' or simbAtual[3] == 'false'):
+                    self.indexDecAtual +=1
+                    return True
+                elif(self.checkValBool(simbAtual[3])):
+                    self.indexDecAtual +=1
+                    return True
+
+                else:
+                    #linha do ponto e virgula que é a mesma
+                    raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha))
+        
+        #elif(outros tipos)
+    def checkValBool(self, string):
+        #checa se é numero, variavel ou expressao aritmetica ou retorno de funcao | ideia que se for diferente de 0 é true
+        if(string.isnumeric() or bool(re.match(r"[0-9A-Za-z]*\({0,}( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",string))):
+            return True
+        #expressao logica, so checo o primeiro char apos o numero
+        #expressoes logicas pela gramatica so tem 2 termos 1 < 2 e nao 1 < 2 < 3
+        if(string[1] == '<' or string[1] == '=' or string[1] == '>'):
+            return True
