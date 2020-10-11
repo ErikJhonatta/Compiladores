@@ -21,3 +21,8 @@ func boolean fSum(int vB, int vA, int vC){
 
 	return vTeste;
 }
+
+proc pSum(int vB, int vA){
+
+
+}

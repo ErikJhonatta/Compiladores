@@ -139,7 +139,7 @@ class Parser:
                                             break
                                         else:
                                             self.erro = True
-                                            raise Exception('Erro sintatico Retorno Func declaracao na linha '+str(self.tokenAtual().linha))
+                                            raise Exception('Erro sintatico no Retorno da Função declaracao na linha '+str(self.tokenAtual().linha))
                                     else:
                                         self.erro = True
                                         raise Exception('Erro sintatico Retorno Func declaracao na linha '+str(self.tokenAtual().linha))
@@ -176,15 +176,36 @@ class Parser:
         
         #<procedimento-declaracao>
         elif(self.tokenAtual().tipo == 'PROC'):
+            temp = []
+            temp.append('PROC')
+            temp.append('NULL')
+            escopoDoProcecimento = self.indexEscopoAtual
+
             self.indexToken += 1
             if(self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'p'):
+                temp.append(self.tokenAtual().lexema) 
                 self.indexToken += 1
                 if(self.tokenAtual().tipo == 'LBRACK'):#parentese esquerdo
+                    #novoEscopo
+                    escopoPai = self.indexEscopoAtual
+                    self.indexEscopoAtual += 1
+                    escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                    self.listaEscopos.append(escopoAtual)
+
+                    temp3 = []
+
                     self.indexToken += 1
                     while(self.tokenAtual().tipo != 'RBRACK'): #obs: verificar caso em que não encontre o RBRACK
+                        temp2 = []
                         if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
+                            temp2.append('VAR')
+                            temp2.append(self.tokenAtual().tipo)
                             self.indexToken += 1
                             if(self.tokenAtual().tipo == 'ID'):#identificador
+                                temp2.append(self.tokenAtual().lexema)
+                                temp2.append('NULL')
+                                temp2.append(self.indexEscopoAtual)
+                                temp3.append(temp2)
                                 self.indexToken += 1
                                 if(self.tokenAtual().tipo == 'COMMA'):#virgula para um proximo parametro
                                     self.indexToken += 1
@@ -195,6 +216,10 @@ class Parser:
                                         pass
                                 elif(self.tokenAtual().tipo == 'RBRACK'):
                                     self.indexToken += 1
+                                    escopoPai = self.indexEscopoAtual
+                                    self.indexEscopoAtual += 1
+                                    escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                                    self.listaEscopos.append(escopoAtual)
                                     break
                                 else:
                                     self.erro = True
@@ -218,7 +243,19 @@ class Parser:
                                 break
                             else:
                                 self.statement()#chamo para verificar os stmts contidos dentro do escopo da função
+                        
                         self.indexToken += 1
+                        temp.append('NULL')
+                        temp.append(escopoDoProcecimento)
+                        self.tabSimbolos.append(temp)
+
+                        for x in range(len(temp3)):
+                            self.tabSimbolos.append(temp3[x])
+
+                        print(self.tabSimbolos)
+
+                        if(self.checkSemantica('PROCDEC', self.indexDecAtual)):
+                            return
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico Chave esquerda do Procedimento declaracao na linha ' + str(self.tokenAtual().linha))
@@ -491,7 +528,7 @@ class Parser:
         
         elif(tipo == 'FUNCDEC'):
             simbDecFuncao = self.tabSimbolos[index]
-            print('SimboloFunc: ', simbDecFuncao)
+            #print('SimboloFunc: ', simbDecFuncao)
             #verificando tipo do retorno da função e se a variavel no retorno existe no escopo
             if(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4]) or self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4] + 1)):
                 self.indexDecAtual += 1
