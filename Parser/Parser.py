@@ -63,17 +63,38 @@ class Parser:
             
         #<funcao-declaracao>
         elif(self.tokenAtual().tipo == 'FUNC'):#tipo função
+            temp = []
+            temp.append('FUNC')
+            escopoDaFuncao = self.indexEscopoAtual
+
             self.indexToken += 1
             if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
+                temp.append(self.tokenAtual().tipo)
                 self.indexToken += 1
                 if(self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'f'):#identificador
+                    temp.append(self.tokenAtual().lexema)
                     self.indexToken += 1
                     if(self.tokenAtual().tipo == 'LBRACK'):#parentese esquerdo
+                        
+                        escopoPai = self.indexEscopoAtual
+                        self.indexEscopoAtual += 1
+                        escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                        self.listaEscopos.append(escopoAtual)
+
+                        temp3 = []
+
                         self.indexToken += 1
                         while(self.tokenAtual().tipo != 'RBRACK'): #verificar caso em que não encontre o RBRACK
+                            temp2 = []
                             if(self.tokenAtual().tipo == 'INT' or self.tokenAtual().tipo == 'TBOOLEAN'):#tipo
+                                temp2.append('VAR')
+                                temp2.append(self.tokenAtual().tipo)
                                 self.indexToken += 1
                                 if(self.tokenAtual().tipo == 'ID'):#identificador
+                                    temp2.append(self.tokenAtual().lexema)
+                                    temp2.append('NULL')
+                                    temp2.append(self.indexEscopoAtual)
+                                    temp3.append(temp2)
                                     self.indexToken += 1
                                     if(self.tokenAtual().tipo == 'COMMA'):#virgula para um proximo parametro
                                         self.indexToken += 1
@@ -98,7 +119,7 @@ class Parser:
                         #saiu do laço, isso significa que encontrou o RBRACK
                         if(self.tokenAtual().tipo != 'LCBRACK'):
                             self.indexToken += 1
-                        
+
                         if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
                             self.indexToken += 1
                             encontrouReturn = False
@@ -107,6 +128,7 @@ class Parser:
                                     self.indexToken += 1
                                     encontrouReturn = True
                                     if(self.tokenAtual().tipo == 'ID'):#identificador
+                                        temp.append(self.tokenAtual().lexema)
                                         self.indexToken += 1 
                                         if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):#ponto e virgula seguido de uma chave direita
                                             self.indexToken += 1
@@ -125,6 +147,15 @@ class Parser:
                                 raise Exception('Erro sintatico no retorno da função na linha '+str(self.tokenAtual().linha - 1))
                             
                             self.indexToken +=1
+                            temp.append(escopoDaFuncao)
+                            self.tabSimbolos.append(temp)
+
+
+                            for x in range(len(temp3)):
+                                self.tabSimbolos.append(temp3[x])
+
+                            if(self.checkSemantica('FUNCDEC', self.indexDecAtual)):
+                                return
 
                         else:
                             self.erro = True
@@ -454,6 +485,16 @@ class Parser:
                     #linha do ponto e virgula que é a mesma
                     raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha))
         
+        elif(tipo == 'FUNCDEC'):
+            simbDecFuncao = self.tabSimbolos[index]
+            print('SimboloFunc: ', simbDecFuncao)
+            #verificando tipo do retorno da função e se a variavel no retorno existe no escopo
+            if(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4]) or self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4] + 1)):
+                self.indexDecAtual += 1
+                return True
+            else:
+                raise Exception("Erro Semântico, variavel no retorno da função não declarada ou possui um tipo diferente de retorno da função: "+str(self.tokenAtual().linha))
+
         #elif(outros tipos)
     def checkValBool(self, string):
         #checa se é numero, variavel ou expressao aritmetica ou retorno de funcao | ideia que se for diferente de 0 é true
@@ -463,3 +504,9 @@ class Parser:
         #expressoes logicas pela gramatica so tem 2 termos 1 < 2 e nao 1 < 2 < 3
         if(string[1] == '<' or string[1] == '=' or string[1] == '>'):
             return True
+
+    def checkExisteNoEscopo(self, dec, tipo, variavel, indexEscopo):
+        for x in range(len(self.tabSimbolos)):
+            if(self.tabSimbolos[x][0] == dec and self.tabSimbolos[x][1] == tipo and self.tabSimbolos[x][2] == variavel and self.tabSimbolos[x][4] == indexEscopo):
+                return True
+        return False
