@@ -132,6 +132,10 @@ class Parser:
                                         self.indexToken += 1 
                                         if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):#ponto e virgula seguido de uma chave direita
                                             self.indexToken += 1
+                                            escopoPai = self.indexEscopoAtual
+                                            self.indexEscopoAtual += 1
+                                            escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                                            self.listaEscopos.append(escopoAtual)
                                             break
                                         else:
                                             self.erro = True
