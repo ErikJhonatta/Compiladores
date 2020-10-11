@@ -15,3 +15,14 @@ int vQ = vA;
 int vX = fSum(1,2);
 
 boolean vW = fBool(5);
+
+func boolean fSum(int vB, int vA, int vC){
+	boolean vTeste = 1;
+
+	return vTeste;
+}
+
+proc pSum(int vB, int vA){
+
+
+}
