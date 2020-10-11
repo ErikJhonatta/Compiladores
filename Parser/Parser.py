@@ -493,7 +493,7 @@ class Parser:
                 self.indexDecAtual += 1
                 return True
             else:
-                raise Exception("Erro Semântico, variavel no retorno da função não declarada ou possui um tipo diferente de retorno da função: "+str(self.tokenAtual().linha))
+                raise Exception("Erro Semântico, variavel no retorno da função não está declarada ou a variável possui um tipo diferente de retorno da função: "+str(self.tokenAtual().linha))
 
         #elif(outros tipos)
     def checkValBool(self, string):

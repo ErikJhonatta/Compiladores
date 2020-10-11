@@ -16,7 +16,8 @@ int vX = fSum(1,2);
 
 boolean vW = fBool(5);
 
-func int fSum(int vB, int vA, int vC){
+func boolean fSum(int vB, int vA, int vC){
+	boolean vTeste = 1;
 
-	return vC;
+	return vTeste;
 }
