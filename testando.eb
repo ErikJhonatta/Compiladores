@@ -1,3 +1,7 @@
+func int fSum(int vA, int vB){
+    int vC = 2 + 3 + 4 + 5;
+    return vC;
+}
+
 int vA = 1 < 2;
-int vB = 5;
-int vA = vB;
+int vA = fSum(1,2);

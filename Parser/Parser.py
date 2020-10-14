@@ -444,6 +444,8 @@ class Parser:
             if(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
                 if(self.tokenAtual().lexema[0] == 'f'):# se for uma funcao
                     funcExpr = str(self.tokenAtual().lexema)
+                    if(not self.checkFuncExiste(funcExpr)):
+                        raise Exception('Erro Semântico na atribuição, Função inexistente: '+str(funcExpr)+' na linha: ',self.tokenAtual().linha)
                     self.indexToken+=1
                     if(self.tokenAtual().tipo == 'LBRACK'):
                         funcExpr += str(self.tokenAtual().lexema)
@@ -560,5 +562,11 @@ class Parser:
         for i in self.tabSimbolos:
             if(i[2].strip("'") == var):
                 achou = True
-        return achou
+        return achou    
 
+    def checkFuncExiste(self,func):
+        achou = False
+        for i in self.tabSimbolos:
+            if(i[2].strip("'") == func):
+                achou = True
+        return achou
