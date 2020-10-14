@@ -475,8 +475,11 @@ class Parser:
                         raise Exception('Erro sintatico Parentese esquerdo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
                 else:#é uma variavel
                     varExpr = str(self.tokenAtual().lexema)
-                    self.indexToken +=1
-                    return varExpr
+                    if(self.checkVarExiste(varExpr)):
+                        self.indexToken +=1
+                        return varExpr
+                    else:
+                        raise Exception('Erro Semântico na atribuição, Variável inexistente: '+str(varExpr)+' na linha: ',self.tokenAtual().linha)
             else:
                 self.erro = True
                 raise Exception('Erro sintatico, id nao comeca com f ou v '+str(self.tokenAtual().linha))
@@ -551,3 +554,11 @@ class Parser:
             if(self.tabSimbolos[x][0] == dec and self.tabSimbolos[x][1] == tipo and self.tabSimbolos[x][2] == variavel and self.tabSimbolos[x][4] == indexEscopo):
                 return True
         return False
+    
+    def checkVarExiste(self,var):
+        achou = False
+        for i in self.tabSimbolos:
+            if(i[2].strip("'") == var):
+                achou = True
+        return achou
+
