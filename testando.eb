@@ -1,2 +1,2 @@
-int vA = 1 + fDale() * 3;
+int vA = 1 < vB;
 int vA = fSum(1,2);

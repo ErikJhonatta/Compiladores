@@ -432,6 +432,8 @@ class Parser:
                 elif(self.lookAhead().tipo == 'ID'):
                     if(self.lookAhead().lexema[0] == 'v'):
                         logicExpr += str(self.lookAhead().lexema)
+                        if(not self.checkVarExiste(self.lookAhead().lexema)):##Checa se existe aquele ID declarado antes
+                            raise Exception('Erro Semântico na op logica, Variável inexistente: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)                        
                         self.indexToken +=2
                         return logicExpr
                     else:
