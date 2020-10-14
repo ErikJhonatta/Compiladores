@@ -48,7 +48,6 @@ class Parser:
                         self.indexToken +=1
                         temp.append(self.indexEscopoAtual)
                         self.tabSimbolos.append(temp)
-                        print(temp)
                         if(self.checkSemantica('VARDEC',self.indexDecAtual)):
                             return
                     else:
@@ -444,6 +443,8 @@ class Parser:
             if(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
                 if(self.tokenAtual().lexema[0] == 'f'):# se for uma funcao
                     funcExpr = str(self.tokenAtual().lexema)
+                    if(not self.checkFuncExiste(funcExpr)):
+                        raise Exception('Erro Semântico na atribuição, Função inexistente: '+str(funcExpr)+' na linha: ',self.tokenAtual().linha)
                     self.indexToken+=1
                     if(self.tokenAtual().tipo == 'LBRACK'):
                         funcExpr += str(self.tokenAtual().lexema)
@@ -555,10 +556,18 @@ class Parser:
                 return True
         return False
     
-    def checkVarExiste(self,var):
+    def checkVarExiste(self,var):# Modificar depois que bruno colocar lista de parametros, pra checar os parametros
+                                 # Verificar questão do Escopo
         achou = False
         for i in self.tabSimbolos:
             if(i[2].strip("'") == var):
                 achou = True
-        return achou
+        return achou    
 
+    def checkFuncExiste(self,func):# Modificar depois que bruno colocar lista de parametros, pra checar os parametros
+                                   # Verificar questão do Escopo
+        achou = False
+        for i in self.tabSimbolos:
+            if(i[2].strip("'") == func):
+                achou = True
+        return achou

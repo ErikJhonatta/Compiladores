@@ -20,3 +20,5 @@ if __name__ == "__main__":
         parser.start()
     except Exception as e:
         print(e)
+    for i in parser.tabSimbolos:
+        print(i)
