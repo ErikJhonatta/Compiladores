@@ -48,7 +48,6 @@ class Parser:
                         self.indexToken +=1
                         temp.append(self.indexEscopoAtual)
                         self.tabSimbolos.append(temp)
-                        print(temp)
                         if(self.checkSemantica('VARDEC',self.indexDecAtual)):
                             return
                     else:
@@ -557,14 +556,16 @@ class Parser:
                 return True
         return False
     
-    def checkVarExiste(self,var):
+    def checkVarExiste(self,var):# Modificar depois que bruno colocar lista de parametros, pra checar os parametros
+                                 # Verificar questão do Escopo
         achou = False
         for i in self.tabSimbolos:
             if(i[2].strip("'") == var):
                 achou = True
         return achou    
 
-    def checkFuncExiste(self,func):
+    def checkFuncExiste(self,func):# Modificar depois que bruno colocar lista de parametros, pra checar os parametros
+                                   # Verificar questão do Escopo
         achou = False
         for i in self.tabSimbolos:
             if(i[2].strip("'") == func):
