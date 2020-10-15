@@ -10,6 +10,8 @@ class Parser:
         self.tabSimbolos = []
         self.indexDecAtual = 0 #Pra saber na semantica qual declaracao no codigo tá sendo checada
                                #seja, variavel, funcao, procedimento e etc
+        self.indexDecFunc = 0
+
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
 
@@ -74,7 +76,7 @@ class Parser:
                     temp.append(self.tokenAtual().lexema)
                     self.indexToken += 1
                     if(self.tokenAtual().tipo == 'LBRACK'):#parentese esquerdo
-                        
+
                         escopoPai = self.indexEscopoAtual
                         self.indexEscopoAtual += 1
                         escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
@@ -119,6 +121,17 @@ class Parser:
                         if(self.tokenAtual().tipo != 'LCBRACK'):
                             self.indexToken += 1
 
+                        temp.append('RETURN')
+                        temp.append(escopoDaFuncao)
+                        temp.append(temp3)
+                        self.tabSimbolos.append(temp)
+                        self.indexDecFunc = len(self.tabSimbolos) - 1
+
+                        for x in range(len(temp3)):
+                            self.tabSimbolos.append(temp3[x])
+
+                        print(self.tabSimbolos)
+
                         if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
                             self.indexToken += 1
                             encontrouReturn = False
@@ -127,7 +140,8 @@ class Parser:
                                     self.indexToken += 1
                                     encontrouReturn = True
                                     if(self.tokenAtual().tipo == 'ID'):#identificador
-                                        temp.append(self.tokenAtual().lexema)
+                                        temp[3] = self.tokenAtual().lexema
+                                        self.adicionarVarDeRetornoFuncTabSimbolo(temp)
                                         self.indexToken += 1 
                                         if(self.tokenAtual().tipo == 'SEMICOLON' and self.lookAhead().tipo == 'RCBRACK'):#ponto e virgula seguido de uma chave direita
                                             self.indexToken += 1
@@ -150,14 +164,8 @@ class Parser:
                                 raise Exception('Erro sintatico no retorno da função na linha '+str(self.tokenAtual().linha - 1))
                             
                             self.indexToken +=1
-                            temp.append(escopoDaFuncao)
-                            self.tabSimbolos.append(temp)
 
-
-                            for x in range(len(temp3)):
-                                self.tabSimbolos.append(temp3[x])
-
-                            if(self.checkSemantica('FUNCDEC', self.indexDecAtual)):
+                            if(self.checkSemantica('FUNCDEC', self.indexDecFunc)):
                                 return
 
                         else:
@@ -532,7 +540,7 @@ class Parser:
         
         elif(tipo == 'FUNCDEC'):
             simbDecFuncao = self.tabSimbolos[index]
-            #print('SimboloFunc: ', simbDecFuncao)
+            print('SimboloFunc: ', simbDecFuncao)
             #verificando tipo do retorno da função e se a variavel no retorno existe no escopo
             if(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4]) or self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4] + 1)):
                 self.indexDecAtual += 1
@@ -571,3 +579,8 @@ class Parser:
             if(i[2].strip("'") == func):
                 achou = True
         return achou
+
+    def adicionarVarDeRetornoFuncTabSimbolo(self, temp):
+        for x in range(len(self.tabSimbolos)):
+            if(temp[0] == self.tabSimbolos[x][0] and temp[1] == self.tabSimbolos[x][1] and temp[2] == self.tabSimbolos[x][2] and temp[4] == self.tabSimbolos[x][4]):
+                self.tabSimbolos[x][3] = temp[3]
