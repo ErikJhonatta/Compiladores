@@ -414,6 +414,13 @@ class Parser:
                     aritExpr+=str(self.tokenAtual().lexema)
                     if(self.lookAhead().tipo == 'NUMBER' or (self.lookAhead().tipo == 'ID' and (self.lookAhead().lexema[0] == 'v' or self.lookAhead().lexema[0] == 'f'))):
                         aritExpr+=str(self.lookAhead().lexema) ### funcionando para numero e numer apenas
+                        if(self.lookAhead().lexema[0] =='v'):
+                            if(not self.checkVarExiste(self.lookAhead().lexema)):##Checa se existe aquele ID declarado antes
+                                raise Exception('Erro Semântico na aritmetica, Variável inexistente: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
+                        else:
+                            if(not self.checkFuncExiste(self.lookAhead().lexema)):##Checa se existe aquele ID declarado antes
+                                raise Exception('Erro Semântico na aritmetica, Função inexistente: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
+                        
                         self.indexToken +=2 #Token depois do numero
                         #Mais de um termo na expressao, entra nesse if
                         if(self.tokenAtual().tipo == 'SUM' or self.tokenAtual().tipo == 'SUB' or self.tokenAtual().tipo == 'DIV' or self.tokenAtual().tipo == 'MUL'):
@@ -436,6 +443,8 @@ class Parser:
                 elif(self.lookAhead().tipo == 'ID'):
                     if(self.lookAhead().lexema[0] == 'v'):
                         logicExpr += str(self.lookAhead().lexema)
+                        if(not self.checkVarExiste(self.lookAhead().lexema)):##Checa se existe aquele ID declarado antes
+                            raise Exception('Erro Semântico na op logica, Variável inexistente: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)                        
                         self.indexToken +=2
                         return logicExpr
                     else:
