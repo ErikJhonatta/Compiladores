@@ -241,6 +241,17 @@ class Parser:
                     #saiu do laço, isso significa que encontrou o RBRACK
                     if(self.tokenAtual().tipo != 'LCBRACK'):
                         self.indexToken += 1
+
+                    temp.append('NULL')
+                    temp.append(escopoDoProcecimento)
+                    temp.append(temp3)
+                    self.tabSimbolos.append(temp)
+                    self.indexDecFunc = len(self.tabSimbolos) - 1
+
+                    for x in range(len(temp3)):
+                        self.tabSimbolos.append(temp3[x])
+
+                    print(self.tabSimbolos)
                     
                     if(self.tokenAtual().tipo == 'LCBRACK'):#chave esquerda
                         self.indexToken += 1
@@ -252,16 +263,8 @@ class Parser:
                                 self.statement()#chamo para verificar os stmts contidos dentro do escopo da função
                         
                         self.indexToken += 1
-                        temp.append('NULL')
-                        temp.append(escopoDoProcecimento)
-                        self.tabSimbolos.append(temp)
 
-                        for x in range(len(temp3)):
-                            self.tabSimbolos.append(temp3[x])
-
-                        print(self.tabSimbolos)
-
-                        if(self.checkSemantica('PROCDEC', self.indexDecAtual)):
+                        if(self.checkSemantica('PROCDEC', self.indexDecFunc)):
                             return
                     else:
                         self.erro = True

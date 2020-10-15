@@ -12,3 +12,8 @@ func boolean fUniu(boolean vUniuuu){
 
     return vUniuuu;
 }
+
+proc pTestando(int vA, boolean vC){
+    int vT = 2;
+    boolean vRest = 54;
+}
