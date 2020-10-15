@@ -1,2 +1,19 @@
-int vA = 1 < vB;
+func int fSum(int vA, int vB){
+    int vC = 2 + 3 + 4 + 5;
+    boolean vB = true;
+    return vC;
+}
+
+int vA = 1 < 2;
 int vA = fSum(1,2);
+
+func boolean fUniu(boolean vUniuuu){
+    int vT = 1;	
+
+    return vUniuuu;
+}
+
+proc pTestando(int vA, boolean vC){
+    int vT = 2;
+    boolean vRest = 54;
+}
