@@ -1,30 +1,13 @@
 int vA = 1;
+vA = 23;
+vA = 25;
 func boolean fUniu(boolean vUniuuu){
     boolean vUniu = true;
+    vUniu = false;
     return vUniu;
 }
-int vB = 2;
-func boolean fUniuX(boolean vUniuuuX){
-    boolean vUniuX = true;
-    return vUniuX;
-}
-int vD = 3;
-func boolean fUniuXX(boolean vUniuuuXX){
-    boolean vUniuXX = true;
-    return vUniuXX;
-}
-int vC = 111;
-
-int vW = 1;
-proc pUniu(boolean vUniuuu){
-    boolean vUniu = true;
-}
-int vX = 2;
-proc pUniuX(boolean vUniuuuX){
-    boolean vUniuX = true;
-}
-int vY = 3;
+vA = 22;
 proc pUniuXX(boolean vUniuuuXX){
     boolean vUniuXX = true;
+    vUniuXX=false;
 }
-int vZ = 111;

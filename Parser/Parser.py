@@ -286,7 +286,31 @@ class Parser:
                 raise Exception('Erro sintatico depois do puts na linha ' + str(self.tokenAtual().linha))
         #Chamada de funcao e procedimento e atribuição de var existente**
         elif(self.tokenAtual().tipo == 'ID'):
-            if(self.tokenAtual().lexema[0] == 'f' or self.tokenAtual().lexema[0] == 'p'):
+            #atribuicao de var ja existente vA = 2; sem a declaracao int vA = 1;
+            if(self.tokenAtual().lexema[0] == 'v'):
+                temp = []
+                temp.append('ATTR')
+                simbolo =self.buscarSimboloVarPorLexema(self.tokenAtual().lexema)
+                if(simbolo != ''):
+                    temp.append(simbolo[1])
+                    temp.append(simbolo[2])
+                    self.indexToken +=1
+                    if(self.tokenAtual().tipo == 'ATTR'):
+                        self.indexToken +=1
+                        temp.append(self.expression())
+                        if(self.tokenAtual().tipo == 'SEMICOLON'):
+                            self.indexToken +=1
+                            temp.append(self.indexEscopoAtual)
+                            self.tabSimbolos.append(temp)
+                        else:
+                            raise Exception('Erro sintatico Ponto e virgula Var atribuição na linha '+str(self.tokenAtual().linha))
+
+                    else:
+                        raise Exception("Erro Sintatico, na linha: "+str(self.tokenAtual().linha))
+                else:
+                    raise Exception("Erro Semântico, variavel não está declarada: "+str(self.tokenAtual().linha))
+
+            elif(self.tokenAtual().lexema[0] == 'f' or self.tokenAtual().lexema[0] == 'p'):
                 self.indexToken +=1
                 if(self.tokenAtual().tipo == 'LBRACK'):
                     self.indexToken+=1
@@ -356,7 +380,7 @@ class Parser:
             else:
                 self.erro = True
                 raise Exception('Erro sintatico parentese esquerdo IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
-
+        #While
         elif(self.tokenAtual().tipo == 'WHILE'):
             self.indexToken += 1
             if(self.tokenAtual().tipo == 'LBRACK'):
@@ -518,7 +542,7 @@ class Parser:
         return self.tabTokens[self.indexToken + 1]
 
     #Estrutura da Tabela de Simbolos
-    #idx 0 - tipo do comando: VAR, FUNC, PUTS
+    #idx 0 - tipo do comando: VAR, FUNC, PUTS, ATTR -> vA = 1;
     #idx 1 - tipo da var ou do retorno de funcao, ou do que o Puts ta printando: INT, TBOOLEAN
     #idx 2 - identificador da func ou da var: vA, fSum
     #idx 3 - valor da var, retorno da func etc: 1+2+3
@@ -591,3 +615,8 @@ class Parser:
         for x in range(len(self.tabSimbolos)):
             if(temp[0] == self.tabSimbolos[x][0] and temp[1] == self.tabSimbolos[x][1] and temp[2] == self.tabSimbolos[x][2] and temp[4] == self.tabSimbolos[x][4]):
                 self.tabSimbolos[x][3] = temp[3]
+    def buscarSimboloVarPorLexema(self,lexema):
+        for i in self.tabSimbolos:
+            if(i[0].strip("'") == 'VAR' and i[2].strip("'") == lexema):
+                return i
+        return ''
