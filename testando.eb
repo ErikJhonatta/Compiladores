@@ -1,19 +1,30 @@
-func int fSum(int vA, int vB){
-    int vC = 2 + 3 + 4 + 5;
-    boolean vB = true;
-    return vC;
-}
-
-int vA = 1 < 2;
-int vA = fSum(1,2);
-
+int vA = 1;
 func boolean fUniu(boolean vUniuuu){
-    int vT = 1;	
-
-    return vUniuuu;
+    boolean vUniu = true;
+    return vUniu;
 }
-
-proc pTestando(int vA, boolean vC){
-    int vT = 2;
-    boolean vRest = 54;
+int vB = 2;
+func boolean fUniuX(boolean vUniuuuX){
+    boolean vUniuX = true;
+    return vUniuX;
 }
+int vD = 3;
+func boolean fUniuXX(boolean vUniuuuXX){
+    boolean vUniuXX = true;
+    return vUniuXX;
+}
+int vC = 111;
+
+int vW = 1;
+proc pUniu(boolean vUniuuu){
+    boolean vUniu = true;
+}
+int vX = 2;
+proc pUniuX(boolean vUniuuuX){
+    boolean vUniuX = true;
+}
+int vY = 3;
+proc pUniuXX(boolean vUniuuuXX){
+    boolean vUniuXX = true;
+}
+int vZ = 111;
