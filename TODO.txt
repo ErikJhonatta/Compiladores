@@ -1,4 +1,9 @@
-Semantico
-Função pra verificar se a funcao que ta atribuindo pra uma var existe e se o tipo bate
-Ex: int vA = fSum(1,2);
- --Ver se fSum existe e retorna int
+checkExiste no Escopo não verifica se a variavel tá nos parametros
+Ex:
+func boolean fUniu(boolean vUniuuu){
+    return vUniuuu;
+}
+
+verificar checkSemantica de Func
+
+Comentar a linha 555, que tem um return True só para testes
