@@ -291,7 +291,6 @@ class Parser:
                 temp = []
                 temp.append('ATTR')
                 simbolo =self.buscarSimboloVarPorLexema(self.tokenAtual().lexema)
-                print(self.indexEscopoAtual)
                 if(simbolo != ''):
                     temp.append(simbolo[1])
                     temp.append(simbolo[2])
@@ -573,11 +572,17 @@ class Parser:
         elif(tipo == 'FUNCDEC'):
             simbDecFuncao = self.tabSimbolos[index]
             #verificando tipo do retorno da função e se a variavel no retorno existe no escopo
-            if(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4]) or self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4] + 1)):
+            if(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4], self.tabSimbolos)):#Se a var tiver no escopo global
+                self.indexDecAtual += 1
+                return True
+            elif(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[5][0][4], simbDecFuncao[5])):#Se a var tiver nos parametros de func
+                self.indexDecAtual += 1
+                return True
+            elif(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[5][0][4], self.tabSimbolos)):#Se a var tiver no escopo da função
                 self.indexDecAtual += 1
                 return True
             else:
-                return True ##Bypass pra teste
+                #return True ##Bypass pra teste
                 raise Exception("Erro Semântico, variavel no retorno da função não está declarada ou a variável possui um tipo diferente de retorno da função: "+str(self.tokenAtual().linha))
 
         #elif(outros tipos)
@@ -590,9 +595,9 @@ class Parser:
         if(string[1] == '<' or string[1] == '=' or string[1] == '>'):
             return True
 
-    def checkExisteNoEscopo(self, dec, tipo, variavel, indexEscopo):
-        for x in range(len(self.tabSimbolos)):
-            if(self.tabSimbolos[x][0] == dec and self.tabSimbolos[x][1] == tipo and self.tabSimbolos[x][2] == variavel and self.tabSimbolos[x][4] == indexEscopo):
+    def checkExisteNoEscopo(self, dec, tipo, variavel, indexEscopo, array):
+        for x in range(len(array)):
+            if(array[x][0] == dec and array[x][1] == tipo and array[x][2] == variavel and array[x][4] == indexEscopo):
                 return True
         return False
     
