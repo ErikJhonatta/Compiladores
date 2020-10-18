@@ -346,7 +346,19 @@ class Parser:
                 raise Exception('Erro sintatico identificador chamada de funcao ou procedimento '+str(self.tokenAtual().linha))
         #IF
         elif(self.tokenAtual().tipo == 'IF'):
+            escopoForaDoIf = self.indexEscopoAtual
+            temp = []
             self.indexToken+=1
+
+            temp.append('IF')
+            temp.append(self.getExpressao())
+            temp.append('NULL')
+            temp.append('NULL')
+            temp.append(self.indexEscopoAtual)
+            self.tabSimbolos.append(temp)
+
+            escopoPai = self.indexEscopoAtual #escopo para o if e o else
+
             if(self.tokenAtual().tipo == 'LBRACK'):
                 self.indexToken +=1
                 self.condicao()# precisa atualizar o index dentro
@@ -354,14 +366,33 @@ class Parser:
                     self.indexToken +=1
                     if(self.tokenAtual().tipo == 'LCBRACK'):
                         self.indexToken +=1
+
+                        #escopoPai = self.indexEscopoAtual
+                        self.indexEscopoAtual = len(self.listaEscopos) 
+                        escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                        self.listaEscopos.append(escopoAtual)
+
                         while(self.tokenAtual().tipo != 'RCBRACK'):
                             self.statement()
                         #fora do laço, encontrou o RCBRACK
                         self.indexToken +=1
                         if(self.tokenAtual().tipo == 'ELSE'):
                             self.indexToken +=1
+
+                            temp = []
+                            temp.append('ELSE')
+                            temp.append('NULL')
+                            temp.append('NULL')
+                            temp.append('NULL')
+                            temp.append(escopoPai)
+                            self.tabSimbolos.append(temp)
+
                             if(self.tokenAtual().tipo == 'LCBRACK'):
                                 self.indexToken +=1
+                                #escopoPai = self.indexEscopoAtual
+                                self.indexEscopoAtual = len(self.listaEscopos) 
+                                escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                                self.listaEscopos.append(escopoAtual)
                                 while(self.tokenAtual().tipo != 'RCBRACK'):
                                     self.statement()
                                 self.indexToken +=1
@@ -369,6 +400,7 @@ class Parser:
                                 self.erro = True
                                 raise Exception('Erro sintatico chaves esquerda else na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
             
+                        self.indexEscopoAtual = escopoForaDoIf
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico chaves esquerda IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
@@ -384,8 +416,6 @@ class Parser:
         elif(self.tokenAtual().tipo == 'WHILE'):
             escopoForaDoWhile = self.indexEscopoAtual
             temp = []
-            
-            self.tabSimbolos.append(temp)
 
             self.indexToken += 1
 
@@ -394,6 +424,7 @@ class Parser:
             temp.append('NULL')
             temp.append('NULL')
             temp.append(self.indexEscopoAtual)
+            self.tabSimbolos.append(temp)
 
             if(self.tokenAtual().tipo == 'LBRACK'):
                 self.indexToken += 1
@@ -551,6 +582,7 @@ class Parser:
         self.expression()
         self.condicao_aux()
         return
+        
     def condicao_aux(self):
         if(self.tokenAtual().tipo == 'EQUAL' or self.tokenAtual().tipo == 'DIFF' or self.tokenAtual().tipo == 'LESS' or self.tokenAtual().tipo == 'LESSEQUAL' or self.tokenAtual().tipo == 'GREAT' or self.tokenAtual().tipo == 'GREATEQUAL'):
             self.indexToken +=1

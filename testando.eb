@@ -17,6 +17,11 @@ while(vB > vTeste2){
 	int vB = 1;
 	while(vB < vTeste2){
 		int vToo = vTeste2;
+		if(vB == vTeste2){
+			int vEee = 123;
+		}else{
+			int vTes = 321;
+		}
 	}
 }
 
