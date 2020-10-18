@@ -382,6 +382,16 @@ class Parser:
                 raise Exception('Erro sintatico parentese esquerdo IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
         #While
         elif(self.tokenAtual().tipo == 'WHILE'):
+            escopoForaDoWhile = self.indexEscopoAtual
+            temp = []
+            temp.append('WHILE')
+            temp.append('CONDICAO') #ver como pegar a condição do while para add em temp
+            temp.append('NULL')
+            temp.append('NULL')
+            temp.append(self.indexEscopoAtual)
+
+            self.tabSimbolos.append(temp)
+
             self.indexToken += 1
             if(self.tokenAtual().tipo == 'LBRACK'):
                 self.indexToken += 1
@@ -391,6 +401,12 @@ class Parser:
                     self.indexToken += 1
                     if(self.tokenAtual().tipo == 'LCBRACK'):
                         self.indexToken += 1
+
+                        escopoPai = self.indexEscopoAtual
+                        self.indexEscopoAtual = len(self.listaEscopos) 
+                        escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                        self.listaEscopos.append(escopoAtual)
+
                         while(self.tokenAtual().tipo != 'RCBRACK'):
                             if(self.tokenAtual().tipo == 'BREAK' or self.tokenAtual().tipo == 'CONTINUE'):
                                 self.indexToken += 1
@@ -402,6 +418,8 @@ class Parser:
                             else:
                                 self.statement()
                         self.indexToken += 1
+                        self.indexEscopoAtual = escopoForaDoWhile
+
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico chaves esquerda else na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))         
@@ -621,6 +639,7 @@ class Parser:
         for x in range(len(self.tabSimbolos)):
             if(temp[0] == self.tabSimbolos[x][0] and temp[1] == self.tabSimbolos[x][1] and temp[2] == self.tabSimbolos[x][2] and temp[4] == self.tabSimbolos[x][4]):
                 self.tabSimbolos[x][3] = temp[3]
+    
     def buscarSimboloVarPorLexema(self,lexema):# checa se tá no mesmo escopo ou no escopo global que é o 0
         for i in self.tabSimbolos:
             if(i[0].strip("'") == 'VAR' and i[2].strip("'") == lexema and (self.indexEscopoAtual == i[4] or i[4] == 0)):

@@ -11,3 +11,13 @@ func boolean fUniu(boolean vUniuuu){
 }
 
 int vTeste2 = 2;
+int vB = 10;
+
+while(vB > vTeste2){
+	int vB = 1;
+	while(vB < vTeste2){
+		int vToo = vTeste2;
+	}
+}
+
+boolean vTrue = false;
