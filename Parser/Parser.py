@@ -384,15 +384,17 @@ class Parser:
         elif(self.tokenAtual().tipo == 'WHILE'):
             escopoForaDoWhile = self.indexEscopoAtual
             temp = []
+            
+            self.tabSimbolos.append(temp)
+
+            self.indexToken += 1
+
             temp.append('WHILE')
-            temp.append('CONDICAO') #ver como pegar a condição do while para add em temp
+            temp.append(self.getExpressao()) #ver como pegar a condição do while para add em temp
             temp.append('NULL')
             temp.append('NULL')
             temp.append(self.indexEscopoAtual)
 
-            self.tabSimbolos.append(temp)
-
-            self.indexToken += 1
             if(self.tokenAtual().tipo == 'LBRACK'):
                 self.indexToken += 1
                 self.condicao()
@@ -649,3 +651,18 @@ class Parser:
                     if(k[0].strip("'") == 'VAR' and k[2].strip("'") == lexema and (self.indexEscopoAtual == k[4] or k[4] == 0)):
                         return k
         return ''
+
+    def getExpressao(self):
+        indexAtual = self.indexToken
+        self.indexToken += 1
+        expressao = self.tokenAtual().lexema
+        self.indexToken += 1
+        while(self.tokenAtual().tipo != 'RBRACK'):
+            if(self.tokenAtual().tipo == 'RBRACK'):
+                break
+            else:
+                expressao = expressao + ' ' + self.tokenAtual().lexema
+                self.indexToken += 1
+
+        self.indexToken = indexAtual
+        return expressao
