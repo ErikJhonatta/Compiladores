@@ -1,13 +1,11 @@
-int vA = 1;
-vA = 23;
-vA = 25;
-func boolean fUniu(boolean vUniuuu){
-    boolean vUniu = true;
-    vUniu = false;
-    return vUniu;
+int vTeste = 1;
+proc pDale(){
+    int vDale = 1;
+    vDale = 2;
 }
-vA = 22;
-proc pUniuXX(boolean vUniuuuXX){
-    boolean vUniuXX = true;
-    vUniuXX=false;
+
+func boolean fUniu(boolean vUniuuu){
+    vUniuuu = false;
+    vTeste = 15;
+    return vUniu;
 }
