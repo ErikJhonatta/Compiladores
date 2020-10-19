@@ -11,6 +11,8 @@ class Parser:
         self.indexDecAtual = 0 #Pra saber na semantica qual declaracao no codigo tá sendo checada
                                #seja, variavel, funcao, procedimento e etc
         self.indexDecFunc = 0
+        self.tabTresEnderecos = []
+        self.indexTabTresEnd = 0
 
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
@@ -51,6 +53,8 @@ class Parser:
                         temp.append(self.indexEscopoAtual)
                         self.tabSimbolos.append(temp)
                         if(self.checkSemantica('VARDEC',self.indexDecAtual)):
+                            self.gerarCodVar(temp)
+                            
                             return
                     else:
                         self.erro = True
@@ -706,3 +710,43 @@ class Parser:
 
         self.indexToken = indexAtual
         return expressao
+
+    def gerarCodVar(self, temp):
+        contador = 0
+        quadrupla = []
+
+        for x in temp[3]:
+            if(x == '+' or x == '-' or x == '*' or x == '/'):
+                contador += 1
+        
+        if(contador > 1):
+            pass
+        
+        elif(contador < 2 and contador > 0):#Se tiver apenas um simbolo aritmético
+            operador = ''
+            var1 = ''
+            var2 = ''
+            for x in range(len(temp[3])):
+                var1 += temp[3][x]
+                if(temp[3][x] == '+' or temp[3][x] == '-' or temp[3][x] == '*' or temp[3][x] == '/'):
+                    operador = temp[3][x]
+                    var1 = var1[:-1]
+                    for y in range(x + 1, len(temp[3])):
+                        var2 += temp[3][y]
+                        print(var2)
+                    break
+
+            quadrupla.append(operador)
+            quadrupla.append(var1)
+            quadrupla.append(var2)
+            quadrupla.append(temp[2])
+            self.tabTresEnderecos.append(quadrupla)
+            
+                
+        else:#Se não tiver nenhum simbolo
+            quadrupla.append('NULL')
+            quadrupla.append(temp[2].strip("'"))
+            quadrupla.append('NULL')
+            quadrupla.append(temp[2].strip("'"))
+            self.tabTresEnderecos.append(quadrupla)
+
