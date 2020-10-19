@@ -7,14 +7,14 @@ proc pDale(){
 func boolean fUniu(boolean vUniuuu){
     vTeste = 15;
     boolean vMiauna = false;
+    int vD = 5;
     return vMiauna;
 }
 
 int vTeste2 = 2;
-int vB = 10;
-
+int vB = 1;
 while(vB > vTeste2){
-	int vB = 1;
+	vB = 1;
 	while(vB < vTeste2){
 		int vToo = vTeste2;
 		if(vB == vTeste2){
@@ -26,3 +26,7 @@ while(vB > vTeste2){
 }
 
 boolean vTrue = false;
+
+int vC = 1 + vB;
+int vD = 0;
+puts vD;
