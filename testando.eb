@@ -1,11 +1,28 @@
-int vTeste = 1;
+boolean vTeste = 1;
 proc pDale(){
     int vDale = 1;
     vDale = 2;
 }
 
 func boolean fUniu(boolean vUniuuu){
-    vUniuuu = false;
     vTeste = 15;
-    return vUniu;
+    boolean vMiauna = false;
+    return vMiauna;
 }
+
+int vTeste2 = 2;
+int vB = 10;
+
+while(vB > vTeste2){
+	int vB = 1;
+	while(vB < vTeste2){
+		int vToo = vTeste2;
+		if(vB == vTeste2){
+			int vEee = 123;
+		}else{
+			int vTes = 321;
+		}
+	}
+}
+
+boolean vTrue = false;

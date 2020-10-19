@@ -291,7 +291,6 @@ class Parser:
                 temp = []
                 temp.append('ATTR')
                 simbolo =self.buscarSimboloVarPorLexema(self.tokenAtual().lexema)
-                print(self.indexEscopoAtual)
                 if(simbolo != ''):
                     temp.append(simbolo[1])
                     temp.append(simbolo[2])
@@ -347,7 +346,19 @@ class Parser:
                 raise Exception('Erro sintatico identificador chamada de funcao ou procedimento '+str(self.tokenAtual().linha))
         #IF
         elif(self.tokenAtual().tipo == 'IF'):
+            escopoForaDoIf = self.indexEscopoAtual
+            temp = []
             self.indexToken+=1
+
+            temp.append('IF')
+            temp.append(self.getExpressao())
+            temp.append('NULL')
+            temp.append('NULL')
+            temp.append(self.indexEscopoAtual)
+            self.tabSimbolos.append(temp)
+
+            escopoPai = self.indexEscopoAtual #escopo para o if e o else
+
             if(self.tokenAtual().tipo == 'LBRACK'):
                 self.indexToken +=1
                 self.condicao()# precisa atualizar o index dentro
@@ -355,14 +366,33 @@ class Parser:
                     self.indexToken +=1
                     if(self.tokenAtual().tipo == 'LCBRACK'):
                         self.indexToken +=1
+
+                        #escopoPai = self.indexEscopoAtual
+                        self.indexEscopoAtual = len(self.listaEscopos) 
+                        escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                        self.listaEscopos.append(escopoAtual)
+
                         while(self.tokenAtual().tipo != 'RCBRACK'):
                             self.statement()
                         #fora do laço, encontrou o RCBRACK
                         self.indexToken +=1
                         if(self.tokenAtual().tipo == 'ELSE'):
                             self.indexToken +=1
+
+                            temp = []
+                            temp.append('ELSE')
+                            temp.append('NULL')
+                            temp.append('NULL')
+                            temp.append('NULL')
+                            temp.append(escopoPai)
+                            self.tabSimbolos.append(temp)
+
                             if(self.tokenAtual().tipo == 'LCBRACK'):
                                 self.indexToken +=1
+                                #escopoPai = self.indexEscopoAtual
+                                self.indexEscopoAtual = len(self.listaEscopos) 
+                                escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                                self.listaEscopos.append(escopoAtual)
                                 while(self.tokenAtual().tipo != 'RCBRACK'):
                                     self.statement()
                                 self.indexToken +=1
@@ -370,6 +400,7 @@ class Parser:
                                 self.erro = True
                                 raise Exception('Erro sintatico chaves esquerda else na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
             
+                        self.indexEscopoAtual = escopoForaDoIf
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico chaves esquerda IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
@@ -383,7 +414,18 @@ class Parser:
                 raise Exception('Erro sintatico parentese esquerdo IF na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))    
         #While
         elif(self.tokenAtual().tipo == 'WHILE'):
+            escopoForaDoWhile = self.indexEscopoAtual
+            temp = []
+
             self.indexToken += 1
+
+            temp.append('WHILE')
+            temp.append(self.getExpressao()) #ver como pegar a condição do while para add em temp
+            temp.append('NULL')
+            temp.append('NULL')
+            temp.append(self.indexEscopoAtual)
+            self.tabSimbolos.append(temp)
+
             if(self.tokenAtual().tipo == 'LBRACK'):
                 self.indexToken += 1
                 self.condicao()
@@ -392,6 +434,12 @@ class Parser:
                     self.indexToken += 1
                     if(self.tokenAtual().tipo == 'LCBRACK'):
                         self.indexToken += 1
+
+                        escopoPai = self.indexEscopoAtual
+                        self.indexEscopoAtual = len(self.listaEscopos) 
+                        escopoAtual = Escopo(self.indexEscopoAtual, escopoPai)
+                        self.listaEscopos.append(escopoAtual)
+
                         while(self.tokenAtual().tipo != 'RCBRACK'):
                             if(self.tokenAtual().tipo == 'BREAK' or self.tokenAtual().tipo == 'CONTINUE'):
                                 self.indexToken += 1
@@ -403,6 +451,8 @@ class Parser:
                             else:
                                 self.statement()
                         self.indexToken += 1
+                        self.indexEscopoAtual = escopoForaDoWhile
+
                     else:
                         self.erro = True
                         raise Exception('Erro sintatico chaves esquerda else na linha '+str(self.tokenAtual().linha)+' '+str(self.tokenAtual().lexema))         
@@ -532,6 +582,7 @@ class Parser:
         self.expression()
         self.condicao_aux()
         return
+        
     def condicao_aux(self):
         if(self.tokenAtual().tipo == 'EQUAL' or self.tokenAtual().tipo == 'DIFF' or self.tokenAtual().tipo == 'LESS' or self.tokenAtual().tipo == 'LESSEQUAL' or self.tokenAtual().tipo == 'GREAT' or self.tokenAtual().tipo == 'GREATEQUAL'):
             self.indexToken +=1
@@ -573,11 +624,17 @@ class Parser:
         elif(tipo == 'FUNCDEC'):
             simbDecFuncao = self.tabSimbolos[index]
             #verificando tipo do retorno da função e se a variavel no retorno existe no escopo
-            if(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4]) or self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4] + 1)):
+            if(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[4], self.tabSimbolos)):#Se a var tiver no escopo global
+                self.indexDecAtual += 1
+                return True
+            elif(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[5][0][4], simbDecFuncao[5])):#Se a var tiver nos parametros de func
+                self.indexDecAtual += 1
+                return True
+            elif(self.checkExisteNoEscopo('VAR', simbDecFuncao[1], simbDecFuncao[3], simbDecFuncao[5][0][4], self.tabSimbolos)):#Se a var tiver no escopo da função
                 self.indexDecAtual += 1
                 return True
             else:
-                return True ##Bypass pra teste
+                #return True ##Bypass pra teste
                 raise Exception("Erro Semântico, variavel no retorno da função não está declarada ou a variável possui um tipo diferente de retorno da função: "+str(self.tokenAtual().linha))
 
         #elif(outros tipos)
@@ -590,9 +647,9 @@ class Parser:
         if(string[1] == '<' or string[1] == '=' or string[1] == '>'):
             return True
 
-    def checkExisteNoEscopo(self, dec, tipo, variavel, indexEscopo):
-        for x in range(len(self.tabSimbolos)):
-            if(self.tabSimbolos[x][0] == dec and self.tabSimbolos[x][1] == tipo and self.tabSimbolos[x][2] == variavel and self.tabSimbolos[x][4] == indexEscopo):
+    def checkExisteNoEscopo(self, dec, tipo, variavel, indexEscopo, array):
+        for x in range(len(array)):
+            if(array[x][0] == dec and array[x][1] == tipo and array[x][2] == variavel and array[x][4] == indexEscopo):
                 return True
         return False
     
@@ -616,6 +673,7 @@ class Parser:
         for x in range(len(self.tabSimbolos)):
             if(temp[0] == self.tabSimbolos[x][0] and temp[1] == self.tabSimbolos[x][1] and temp[2] == self.tabSimbolos[x][2] and temp[4] == self.tabSimbolos[x][4]):
                 self.tabSimbolos[x][3] = temp[3]
+    
     def buscarSimboloVarPorLexema(self,lexema):# checa se tá no mesmo escopo ou no escopo global que é o 0
         for i in self.tabSimbolos:
             if(i[0].strip("'") == 'VAR' and i[2].strip("'") == lexema and (self.indexEscopoAtual == i[4] or i[4] == 0)):
@@ -625,3 +683,18 @@ class Parser:
                     if(k[0].strip("'") == 'VAR' and k[2].strip("'") == lexema and (self.indexEscopoAtual == k[4] or k[4] == 0)):
                         return k
         return ''
+
+    def getExpressao(self):
+        indexAtual = self.indexToken
+        self.indexToken += 1
+        expressao = self.tokenAtual().lexema
+        self.indexToken += 1
+        while(self.tokenAtual().tipo != 'RBRACK'):
+            if(self.tokenAtual().tipo == 'RBRACK'):
+                break
+            else:
+                expressao = expressao + ' ' + self.tokenAtual().lexema
+                self.indexToken += 1
+
+        self.indexToken = indexAtual
+        return expressao
