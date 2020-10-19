@@ -21,6 +21,7 @@ while(vB > vTeste2){
 			int vEee = 123;
 		}else{
 			int vTes = 321;
+			puts vTes;
 		}
 	}
 }

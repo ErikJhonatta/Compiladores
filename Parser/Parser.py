@@ -272,6 +272,14 @@ class Parser:
                     raise Exception('Erro sintatico Identificador do Proc declaracao na linha ' + str(self.tokenAtual().linha))
         #Puts
         elif (self.tokenAtual().tipo == 'PUTS'):
+            temp = []
+            temp.append('PUTS')
+            temp.append('NULL')
+            temp.append('NULL')
+            temp.append('NULL')
+            temp.append(self.indexEscopoAtual)
+            self.tabSimbolos.append(temp)
+            
             self.indexToken +=1
             if((self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'v') or self.tokenAtual().tipo == 'NUMBER'):
                 self.indexToken+=1
