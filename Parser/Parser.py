@@ -323,6 +323,7 @@ class Parser:
                             self.indexToken +=1
                             temp.append(self.indexEscopoAtual)
                             self.tabSimbolos.append(temp)
+                            self.gerarCodVar(temp)
                         else:
                             raise Exception('Erro sintatico Ponto e virgula Var atribuição na linha '+str(self.tokenAtual().linha))
 
@@ -788,6 +789,15 @@ class Parser:
                     quadrupla.append(varList[i+1])
                     varTemporaria = 'T'+str(self.indexTabTresEnd)
                     quadrupla.append(varTemporaria)
+                    self.indexTabTresEnd +=1
+                    self.tabTresEnderecos.append(quadrupla)
+                    quadrupla = []
+                elif(i == len(ops) -1):
+                    quadrupla.append(ops[i])
+                    quadrupla.append(varTemporaria)
+                    varTemporaria = 'T'+str(self.indexTabTresEnd)
+                    quadrupla.append(varList[i+1])
+                    quadrupla.append(temp[2])
                     self.indexTabTresEnd +=1
                     self.tabTresEnderecos.append(quadrupla)
                     quadrupla = []

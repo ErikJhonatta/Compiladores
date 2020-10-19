@@ -3,4 +3,9 @@ int vAuna = 2;
 int vOi = 1;
 boolean vBool = true;
 boolean vBool1 = false;
-int vTeste = vContador * 60 + vContador;
+
+func int fDale(int vA){
+    int vFunc = 2;
+    return vA;
+}
+vOi = vContador * 3 + vAuna;
