@@ -554,15 +554,15 @@ class Parser:
             return val
 
         elif(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
-            if(self.lookAhead().lexema == '+' or self.lookAhead().lexema == '-' or self.lookAhead().lexema == '*' or self.lookAhead().lexema == '/'):
-                if(self.tokenAtual().lexema[0] == 'v'):
-                    varExpr = self.tokenAtual().lexema
-                    if(self.buscarSimboloVarPorLexema(varExpr) != '' and (self.buscarSimboloVarPorLexema(varExpr)[4] == 0 or self.buscarSimboloVarPorLexema(varExpr)[4] == self.indexEscopoAtual)):
-                        pass
-                    else:
-                        raise Exception('Erro Semântico na atribuição, Variável inexistente no escopo: '+str(varExpr)+' na linha: ',self.tokenAtual().linha)
-                return self.aritVar()
-            elif(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
+            if(self.lookAhead().lexema == '+' or self.lookAhead().lexema == '-' or self.lookAhead().lexema == '*' or self.lookAhead().lexema == '/'):####
+                if(self.tokenAtual().lexema[0] == 'v'):####
+                    varExpr = self.tokenAtual().lexema####
+                    if(self.buscarSimboloVarPorLexema(varExpr) != '' and (self.buscarSimboloVarPorLexema(varExpr)[4] == 0 or self.buscarSimboloVarPorLexema(varExpr)[4] == self.indexEscopoAtual)):####
+                        pass####
+                    else:####
+                        raise Exception('Erro Semântico na atribuição, Variável inexistente no escopo: '+str(varExpr)+' na linha: ',self.tokenAtual().linha)####
+                return self.aritVar()####
+            elif(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v #### Se apagar o cod acima marcado, mudar para IF aqui
                 if(self.tokenAtual().lexema[0] == 'f'):# se for uma funcao
                     funcExpr = str(self.tokenAtual().lexema)
                     if(not self.checkFuncExiste(funcExpr)):
