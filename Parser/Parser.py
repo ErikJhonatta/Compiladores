@@ -746,7 +746,6 @@ class Parser:
                     var1 = var1[:-1]
                     for y in range(x + 1, len(temp[3])):
                         var2 += temp[3][y]
-                        print(var2)
                     break
 
             quadrupla.append(operador)
