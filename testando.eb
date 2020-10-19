@@ -8,4 +8,4 @@ func int fDale(int vA){
     int vFunc = 2;
     return vA;
 }
-vOi = vContador * 3 + vAuna;
+vOi = vContador - 3 * vAuna - vContador * vAuna;

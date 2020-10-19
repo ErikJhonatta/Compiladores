@@ -812,10 +812,6 @@ class Parser:
                     quadrupla = []
 
 
-
-
-            # print(varList)
-            # print(ops)
         elif(contador < 2 and contador > 0):#Se tiver apenas um simbolo aritmético
             operador = ''
             var1 = ''
@@ -842,4 +838,3 @@ class Parser:
             quadrupla.append('NULL')
             quadrupla.append(temp[2].strip("'"))
             self.tabTresEnderecos.append(quadrupla)
-
