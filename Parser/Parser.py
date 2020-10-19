@@ -554,7 +554,15 @@ class Parser:
             return val
 
         elif(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
-            if(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
+            if(self.lookAhead().lexema == '+' or self.lookAhead().lexema == '-' or self.lookAhead().lexema == '*' or self.lookAhead().lexema == '/'):
+                if(self.tokenAtual().lexema[0] == 'v'):
+                    varExpr = self.tokenAtual().lexema
+                    if(self.buscarSimboloVarPorLexema(varExpr) != '' and (self.buscarSimboloVarPorLexema(varExpr)[4] == 0 or self.buscarSimboloVarPorLexema(varExpr)[4] == self.indexEscopoAtual)):
+                        pass
+                    else:
+                        raise Exception('Erro Semântico na atribuição, Variável inexistente no escopo: '+str(varExpr)+' na linha: ',self.tokenAtual().linha)
+                return self.aritVar()
+            elif(self.tokenAtual().lexema[0] == 'v' or self.tokenAtual().lexema[0] == 'f'):# checa se o identificador começa com f ou v
                 if(self.tokenAtual().lexema[0] == 'f'):# se for uma funcao
                     funcExpr = str(self.tokenAtual().lexema)
                     if(not self.checkFuncExiste(funcExpr)):
@@ -602,6 +610,33 @@ class Parser:
         else:
             self.erro = True
             raise Exception('Erro sintatico expression '+str(self.tokenAtual().linha))
+    def aritVar(self):
+
+        aritExpr = str(self.tokenAtual().lexema)
+        self.indexToken+=1 # Em cima do simbolo aritmetico
+        aritExpr+=str(self.tokenAtual().lexema)
+        if(self.lookAhead().tipo == 'NUMBER' or (self.lookAhead().tipo == 'ID' and (self.lookAhead().lexema[0] == 'v' or self.lookAhead().lexema[0] == 'f'))):
+            aritExpr+=str(self.lookAhead().lexema) ### funcionando para numero e numer apenas
+            if(self.lookAhead().lexema[0] =='v'):
+                if(self.buscarSimboloVarPorLexema(self.lookAhead().lexema) != ''):    
+                    if(self.buscarSimboloVarPorLexema(self.lookAhead().lexema)[4] != self.indexEscopoAtual):##Checa se existe aquele ID declarado antes
+                        raise Exception('Erro Semântico na aritmetica, Variável inexistente no escopo: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
+                else:
+                    raise Exception('Erro Semântico na aritmetica, Variável inexistente no escopo: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
+            elif(self.lookAhead().lexema[0] == 'f'):
+                if(not self.checkFuncExiste(self.lookAhead().lexema)):##Checa se existe aquele ID declarado antes
+                    raise Exception('Erro Semântico na aritmetica, Função inexistente: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
+            
+            self.indexToken +=2 #Token depois do numero
+            #Mais de um termo na expressao, entra nesse if
+            if(self.tokenAtual().tipo == 'SUM' or self.tokenAtual().tipo == 'SUB' or self.tokenAtual().tipo == 'DIV' or self.tokenAtual().tipo == 'MUL'):
+                aritExpr += self.tokenAtual().lexema
+                self.indexToken += 1
+                aritExpr += self.expression()
+            return aritExpr
+        else:
+            self.erro = True
+            raise Exception('Erro sintatico numero op ?, (arithmetic expression) na linha '+str(self.tokenAtual().linha))
 
     def condicao(self):
         self.expression()
@@ -733,8 +768,44 @@ class Parser:
                 contador += 1
         
         if(contador > 1):
-            pass
-        
+            varTemp = ''
+            varList = []
+            ops = []
+            for x in range(len(temp[3])):
+                if(temp[3][x] == '+' or temp[3][x] == '-' or temp[3][x] == '*' or temp[3][x] == '/'):
+                    varList.append(varTemp)
+                    varTemp = ''
+                    ops.append(temp[3][x])
+                else:
+                    varTemp += str(temp[3][x])
+                    if(x == len(temp[3]) - 1):
+                        varList.append(varTemp)
+            varTemporaria = ''
+            for i in range(len(ops)):
+                if(i == 0):
+                    quadrupla.append(ops[i])
+                    quadrupla.append(varList[i])
+                    quadrupla.append(varList[i+1])
+                    varTemporaria = 'T'+str(self.indexTabTresEnd)
+                    quadrupla.append(varTemporaria)
+                    self.indexTabTresEnd +=1
+                    self.tabTresEnderecos.append(quadrupla)
+                    quadrupla = []
+                else:
+                    quadrupla.append(ops[i])
+                    quadrupla.append(varTemporaria)
+                    varTemporaria = 'T'+str(self.indexTabTresEnd)
+                    quadrupla.append(varList[i+1])
+                    quadrupla.append(varTemporaria)
+                    self.indexTabTresEnd +=1
+                    self.tabTresEnderecos.append(quadrupla)
+                    quadrupla = []
+
+
+
+
+            # print(varList)
+            # print(ops)
         elif(contador < 2 and contador > 0):#Se tiver apenas um simbolo aritmético
             operador = ''
             var1 = ''

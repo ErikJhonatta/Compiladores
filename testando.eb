@@ -1,5 +1,6 @@
 int vContador = 100000;
 int vAuna = 2;
+int vOi = 1;
 boolean vBool = true;
 boolean vBool1 = false;
-int vTeste = 10 + vAuna;
+int vTeste = vContador * 60 + vContador;
