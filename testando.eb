@@ -1,32 +1,5 @@
-boolean vTeste = 1;
-proc pDale(){
-    int vDale = 1;
-    vDale = 2;
-}
-
-func boolean fUniu(boolean vUniuuu){
-    vTeste = 15;
-    boolean vMiauna = false;
-    int vD = 5;
-    return vMiauna;
-}
-
-int vTeste2 = 2;
-int vB = 1;
-while(vB > vTeste2){
-	vB = 1;
-	while(vB < vTeste2){
-		int vToo = vTeste2;
-		if(vB == vTeste2){
-			int vEee = 123;
-		}else{
-			int vTes = 321;
-		}
-	}
-}
-
-boolean vTrue = false;
-
-int vC = 1 + vB;
-int vD = 0;
-puts vD;
+int vContador = 100000;
+int vAuna = 2;
+boolean vBool = true;
+boolean vBool1 = false;
+int vTeste = 10 + vAuna;

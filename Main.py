@@ -22,3 +22,8 @@ if __name__ == "__main__":
         print(e)
     for i in parser.tabSimbolos:
         print(i)
+
+    print('-------------------------------')
+
+    for i in parser.tabTresEnderecos:
+        print(i)
