@@ -272,11 +272,24 @@ class Parser:
                     raise Exception('Erro sintatico Identificador do Proc declaracao na linha ' + str(self.tokenAtual().linha))
         #Puts
         elif (self.tokenAtual().tipo == 'PUTS'):
+            escopoDoPuts = self.indexEscopoAtual
+            temp = []
+            temp.append('PUTS')
+            temp.append('NULL')
             self.indexToken +=1
+            temp.append(self.tokenAtual().lexema)
+            temp.append('NULL')
+            temp.append(escopoDoPuts)
             if((self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'v') or self.tokenAtual().tipo == 'NUMBER'):
-                self.indexToken+=1
+                if(self.buscarSimboloVarPorLexema(self.tokenAtual().lexema) != '' and self.buscarSimboloVarPorLexema(self.tokenAtual().lexema)[4] == self.indexEscopoAtual):
+                    self.indexToken+=1
+                elif(self.tokenAtual().tipo == 'NUMBER'):
+                    self.indexToken +=1
+                else:
+                    raise Exception("Erro Semântico, variavel não está declarada neste escopo: "+str(self.tokenAtual().lexema)+" na linha"+str(self.tokenAtual().linha))
                 if(self.tokenAtual().tipo == 'SEMICOLON'):# se for um numero ou var o proximo token vai ser esse semicolon
                     self.indexToken += 1
+                    self.tabSimbolos.append(temp)
                     return
                 else:
                     self.erro = True
@@ -485,8 +498,11 @@ class Parser:
                     if(self.lookAhead().tipo == 'NUMBER' or (self.lookAhead().tipo == 'ID' and (self.lookAhead().lexema[0] == 'v' or self.lookAhead().lexema[0] == 'f'))):
                         aritExpr+=str(self.lookAhead().lexema) ### funcionando para numero e numer apenas
                         if(self.lookAhead().lexema[0] =='v'):
-                            if(not self.checkVarExiste(self.lookAhead().lexema)):##Checa se existe aquele ID declarado antes
-                                raise Exception('Erro Semântico na aritmetica, Variável inexistente: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
+                            if(self.buscarSimboloVarPorLexema(self.lookAhead().lexema) != ''):    
+                                if(self.buscarSimboloVarPorLexema(self.lookAhead().lexema)[4] != self.indexEscopoAtual):##Checa se existe aquele ID declarado antes
+                                    raise Exception('Erro Semântico na aritmetica, Variável inexistente no escopo: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
+                            else:
+                                raise Exception('Erro Semântico na aritmetica, Variável inexistente no escopo: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
                         elif(self.lookAhead().lexema[0] == 'f'):
                             if(not self.checkFuncExiste(self.lookAhead().lexema)):##Checa se existe aquele ID declarado antes
                                 raise Exception('Erro Semântico na aritmetica, Função inexistente: '+str(self.lookAhead().lexema)+' na linha: ',self.lookAhead().linha)
@@ -566,11 +582,12 @@ class Parser:
                         raise Exception('Erro sintatico Parentese esquerdo da Funcao declaracao na linha ' + str(self.tokenAtual().linha))
                 else:#é uma variavel
                     varExpr = str(self.tokenAtual().lexema)
-                    if(self.checkVarExiste(varExpr)):
+                    # if(self.checkVarExiste(varExpr)):
+                    if(self.buscarSimboloVarPorLexema(varExpr) != '' and (self.buscarSimboloVarPorLexema(varExpr)[4] == 0 or self.buscarSimboloVarPorLexema(varExpr)[4] == self.indexEscopoAtual)):
                         self.indexToken +=1
                         return varExpr
                     else:
-                        raise Exception('Erro Semântico na atribuição, Variável inexistente: '+str(varExpr)+' na linha: ',self.tokenAtual().linha)
+                        raise Exception('Erro Semântico na atribuição, Variável inexistente no escopo: '+str(varExpr)+' na linha: ',self.tokenAtual().linha)
             else:
                 self.erro = True
                 raise Exception('Erro sintatico, id nao comeca com f ou v '+str(self.tokenAtual().linha))
