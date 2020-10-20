@@ -1,0 +1,6 @@
+vContador := 100000
+vAuna := 2
+vOi := 1
+vBool := true
+vBool1 := false
+vFunc := 2
