@@ -28,6 +28,6 @@ if __name__ == "__main__":
 
     #print('-------------------------------')
 
-    for i in parser.tabTresEnderecos:
-        print(i)
+    # for i in parser.tabTresEnderecos:
+    #     print(i)
     parser.gerarArqCod()
