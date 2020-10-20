@@ -18,3 +18,4 @@ param dale
 param dale2
 param dale01
 call pCaraDeSerraMarmore,3
+vOi := 1 + 3
