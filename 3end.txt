@@ -1,3 +1,5 @@
 vAuna := 1
-vContador := 1
-vContador2 := false
+T0 := 1 == vAuna
+if T0 goto _L0
+print 1
+_L0 := print 2
