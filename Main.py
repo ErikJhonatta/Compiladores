@@ -15,7 +15,9 @@ if __name__ == "__main__":
     tabtokens = lexer.scan()
     # for i in tabtokens:
     # 	print(i)
-    parser = Parser(tabtokens)
+    parser = Parser(tabtokens,True)
+    #False = Boolean pode receber int - diferente de 0 é true| e vice e versa
+    #True  = Boolean só recebe boolean | e vice e versa
     try:
         parser.start()
     except Exception as e:
@@ -24,8 +26,8 @@ if __name__ == "__main__":
     for i in parser.tabSimbolos:
         print(i)
 
-    print('-------------------------------')
+    # print('-------------------------------')
 
-    for i in parser.tabTresEnderecos:
-        print(i)
+    # for i in parser.tabTresEnderecos:
+    #     print(i)
     parser.gerarArqCod()
