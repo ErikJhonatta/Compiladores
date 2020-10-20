@@ -1,3 +1,11 @@
+
+vB := false
+vTeste2 := true
+T0 := vTeste2 <> vB
+IF T0 goto
+vA := 1
+vA := 0
+
 vContador := 1 + 2
 vAuna := false<>true
 vFunc := 5 * 8

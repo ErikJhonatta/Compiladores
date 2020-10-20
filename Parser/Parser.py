@@ -391,7 +391,9 @@ class Parser:
             temp.append('NULL')
             temp.append(self.indexEscopoAtual)
             self.tabSimbolos.append(temp)
-
+            
+            self.gerarCodIf(temp)
+            
             escopoPai = self.indexEscopoAtual #escopo para o if e o else
 
             if(self.tokenAtual().tipo == 'LBRACK'):
@@ -421,6 +423,8 @@ class Parser:
                             temp.append('NULL')
                             temp.append(escopoPai)
                             self.tabSimbolos.append(temp)
+
+                            self.gerarCodElse(temp)
 
                             if(self.tokenAtual().tipo == 'LCBRACK'):
                                 self.indexToken +=1
@@ -892,6 +896,7 @@ class Parser:
                 string += '\n'
                 arq.write(string)
                 string = ''
+
             elif(i[0] == '+' or i[0] == '-' or i[0] == '*' or i[0] == '/'):
                 string += str(i[3])
                 string += ' '
@@ -948,9 +953,91 @@ class Parser:
 
                 string = ''
                 parametros = []
+            elif(i[0] == 'IF'):
+                indice = self.buscarIndiceTab3(i)
+                if(indice != '' and indice > 0):
 
+                    x = self.tabTresEnderecos[indice-1]
+                    
+                    string += str(x[3])
+                    string += ' '
+                    string += ':='
+                    string += ' '
+                    string+= str(x[2])
+                    string += ' '
+                    string+= str(x[0])
+                    string += ' '
+                    string += str(x[1])
+                    string += '\n'
+                    arq.write(string)
+                    string = ''
+
+                string += str(i[0])
+                string += ' '
+                string += str(i[1])
+                string += ' '
+                string +=str(i[3])
+                string +='\n'
+                
+                arq.write(string)
+                string = ''
+                    
+                if(self.hasElse(indice) != ''):
+                    pass
         arq.close()
-    
+    def buscarIndiceTab3(self,temp):
+        for i in range(0,len(self.tabTresEnderecos)):
+            if self.tabTresEnderecos[i] == temp:
+                return i
+        return ''
+
+    def hasElse(self,inicio):
+        init = inicio
+        for i in range(init+1,len(self.tabSimbolos)):
+            if(self.tabSimbolos[i][0] == 'IF' and self.tabSimbolos[i][4] == self.indexEscopoAtual):
+                return False
+            elif(self.tabSimbolos[i][0] == 'ELSE' and self.tabSimbolos[i][4] == self.indexEscopoAtual):
+                return True
+            
+    def gerarCodIf(self,temp):
+        expressao = temp[1].split(' ')
+        op = expressao[1]
+        #Negacao
+        if(op == '=='):
+            op = '<>'
+        elif(op == '<>'):
+            op = '=='
+        elif(op == '<'):
+            op = '>'
+        elif(op == '>'):
+            op = '<'
+        elif(op == '>='):
+            op = '<='
+        elif(op == '<='):
+            op = '>='
+        ##If op for neg goto vai pro else
+        quadrupla = []
+        quadrupla.append(op)
+        quadrupla.append(expressao[0])
+        quadrupla.append(expressao[2])
+        quadrupla.append('T'+str(self.indexLinhaTabTresEnd))
+        self.tabTresEnderecos.append(quadrupla)
+        quadrupla = []
+        quadrupla.append('IF')
+        quadrupla.append('T'+str(self.indexTabTresEnd))
+        quadrupla.append('NULL')
+        quadrupla.append('goto')
+        self.indexLinhaTabTresEnd +=1
+        self.tabTresEnderecos.append(quadrupla)
+
+    def gerarCodElse(self,temp):
+        quadrupla = []
+        quadrupla.append(temp[0])
+        quadrupla.append('NULL')
+        quadrupla.append('NULL')
+        quadrupla.append('NULL')
+        self.tabTresEnderecos.append(quadrupla)
+
     def gerarCodPuts(self, temp):
         quadrupla = []
         quadrupla.append('NULL')
