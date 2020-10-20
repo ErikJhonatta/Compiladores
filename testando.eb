@@ -11,3 +11,4 @@ func int fDale(int vA){
 vOi = vContador - 3 * vAuna - vContador * vAuna;
 
 puts vOi;
+
