@@ -1,20 +1,8 @@
-int vContador = 1 + 2;
-boolean vAuna = false <> true;
-func boolean fDale(int vA, int vB){
-    int vFunc = 5 *8;
-    boolean vAAA = false;
-    return vAAA;
+boolean vB = false;
+boolean vTeste2 = true;
+if(vB==vTeste2){
+    int vA = 1;
+}else{
+    int vA = 0;
 }
-int vOi = vContador - 3 * vAuna - vContador * vAuna;
-
-puts vOi;
-
-func boolean fDale2(int vUniu){
-	boolean vTestando = false;
-	return vTestando;
-}
-
-proc pCaraDeSerraMarmore(int dale, boolean dale2, int dale01){
-	int vTestando = 2;
-}
-vOi = 1 + 3;
+pRoc(1);
