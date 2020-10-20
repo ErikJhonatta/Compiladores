@@ -883,11 +883,16 @@ class Parser:
             self.tabTresEnderecos.append(quadrupla)
         
     def gerarArqCod(self):
+        flag = False
         string = ''
         arq = open("3end.txt",'w')
         for i in self.tabTresEnderecos:
             if(i[0] == '='):#atribuição
-                
+                if(flag):
+                    string += '_L'+str(self.indexLinhaTabTresEnd-1)
+                    string += ' '
+                    string += ':= '
+                    flag = 0
                 string += str(i[3])
                 string += ' '
                 string += ':'+str(i[0])
@@ -955,7 +960,7 @@ class Parser:
                 parametros = []
             elif(i[0] == 'IF'):
                 indice = self.buscarIndiceTab3(i)
-                if(indice != '' and indice > 0):
+                if(indice != '' and indice > 0):#var antes de IF, que contem a condição
 
                     x = self.tabTresEnderecos[indice-1]
                     
@@ -972,18 +977,29 @@ class Parser:
                     arq.write(string)
                     string = ''
 
-                string += str(i[0])
+                string += str(i[0]).lower()
                 string += ' '
                 string += str(i[1])
                 string += ' '
-                string +=str(i[3])
+                string +=str(i[3])# goto
                 string +='\n'
                 
                 arq.write(string)
                 string = ''
+            elif(i[0] == 'ELSE'):#checa declarao de if antes
+                flag = True
+                lista = []
+                arq.close()
+                arq = open("3end.txt",'r')
+                for a in arq.readlines():
+                    if('goto' in a):
+                        a = a.replace("goto\n","goto _L"+str(self.indexLinha)+'\n')
+                    lista.append(a)
+                arq.close()
+                arq = open("3end.txt",'w')
+                for i in lista:
+                    arq.write(i)
                     
-                if(self.hasElse(indice) != ''):
-                    pass
         arq.close()
     def buscarIndiceTab3(self,temp):
         for i in range(0,len(self.tabTresEnderecos)):

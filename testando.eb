@@ -4,21 +4,7 @@ if(vB==vTeste2){
     int vA = 1;
 }else{
     int vA = 0;
-}
-int vOi = vContador - 3 * vAuna - vContador * vAuna;
-
-puts vOi;
-
-func int fDale2(int vUniu, int vU){
-	int vTestando = 12;
-	return vTestando;
+    vB = true;
 }
 
-proc pCaraDeSerraMarmore(int dale, boolean dale2, int dale01){
-	int vTestando = 2;
-}
-
-fDale2(2, 10);
-pCaraDeSerraMarmore(1,false,3);
-fDale2(2, 10);
 
