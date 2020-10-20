@@ -14,6 +14,7 @@ class Parser:
         self.tabTresEnderecos = []
         self.indexTabTresEnd = 0
         self.indexLinha = 0
+        self.indexLinhaTabTresEnd = 0
 
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
@@ -167,6 +168,8 @@ class Parser:
                                 raise Exception('Erro sintatico no retorno da função na linha '+str(self.tokenAtual().linha - 1))
                             self.indexToken +=1
 
+                            self.gerarCodFunc(temp)
+
                             if(self.checkSemantica('FUNCDEC', self.indexDecFunc)):
                                 return
 
@@ -262,6 +265,8 @@ class Parser:
                         self.indexEscopoAtual = escopoForaDoProc
 
                         self.indexToken += 1
+
+                        self.gerarCodProc(temp)
 
                         if(self.checkSemantica('PROCDEC', self.indexDecFunc)):
                             return
@@ -874,6 +879,42 @@ class Parser:
                 string += '\n'
                 arq.write(string)
                 string = ''
+            
+            elif(i[1][0] == 'f'):
+                parametros = []
+                for x in range(len(i[2])):
+                    parametros.append(i[2][x][2])
+                
+                string = ''
+                for x in range(len(parametros)):
+                    string += 'param ' + parametros[x]
+                    string += '\n'
+                    arq.write(string)
+                    string = ''
+
+                string += i[3] + ' := ' + 'call ' + i[1] + ',' + str(len(parametros)) + '\n'
+                arq.write(string)
+                
+                string = ''
+                parametros = []
+
+            elif(i[1][0] == 'p'):
+                parametros = []
+                for x in range(len(i[2])):
+                    parametros.append(i[2][x][2])
+                
+                string = ''
+                for x in range(len(parametros)):
+                    string += 'param ' + parametros[x]
+                    string += '\n'
+                    arq.write(string)
+                    string = ''
+
+                string += 'call ' + i[1] + ',' + str(len(parametros)) + '\n'
+                arq.write(string)
+
+                string = ''
+                parametros = []
 
         arq.close()
     
@@ -884,6 +925,26 @@ class Parser:
         quadrupla.append('NULL')
         quadrupla.append(temp[0])
 
+        self.tabTresEnderecos.append(quadrupla)
+    
+    def gerarCodFunc(self, temp):
+        quadrupla = []
+        quadrupla.append('NULL')
+        quadrupla.append(temp[2])
+        quadrupla.append(temp[5])
+        linha = '_L' + str(self.indexLinhaTabTresEnd)
+        self.indexLinhaTabTresEnd += 1
+        quadrupla.append(linha)
+
+        self.tabTresEnderecos.append(quadrupla)
+
+    def gerarCodProc(self, temp):
+        quadrupla = []
+        quadrupla.append('NULL')
+        quadrupla.append(temp[2])
+        quadrupla.append(temp[5])
+        quadrupla.append('NULL')
+        
         self.tabTresEnderecos.append(quadrupla)
 
 

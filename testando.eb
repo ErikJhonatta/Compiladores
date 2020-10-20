@@ -4,7 +4,7 @@ int vOi = 1;
 boolean vBool = true;
 boolean vBool1 = false;
 
-func int fDale(int vA){
+func int fDale(int vA, int vB){
     int vFunc = 2;
     return vA;
 }
@@ -12,3 +12,11 @@ vOi = vContador - 3 * vAuna - vContador * vAuna;
 
 puts vOi;
 
+func boolean fDale2(int vUniu){
+	boolean vTestando = true;
+	return vTestando;
+}
+
+proc pCaraDeSerraMarmore(int dale, boolean dale2, int dale01){
+	int vTestando = 2;
+}
