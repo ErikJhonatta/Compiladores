@@ -910,7 +910,7 @@ class Parser:
                     arq.write(string)
                     string = ''
 
-                string += i[1] + ',' + str(len(parametros)) + '\n'
+                string += 'call ' + i[1] + ',' + str(len(parametros)) + '\n'
                 arq.write(string)
 
                 string = ''
