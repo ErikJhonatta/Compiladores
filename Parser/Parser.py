@@ -916,6 +916,7 @@ class Parser:
             if(i[0] == '='):#atribuição
                 if(flag):
                     string += '_L'+str(self.indexLinhaTabTresEnd-1)
+                    self.indexLinhaTabTresEnd +=1
                     string += ' '
                     string += ':= '
                     flag = False
@@ -930,7 +931,8 @@ class Parser:
 
             elif(i[0] == '+' or i[0] == '-' or i[0] == '*' or i[0] == '/'):
                 if(flag):
-                    string += '_L'+str(self.indexLinhaTabTresEnd-1)
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
                     string += ' '
                     string += ':= '
                     flag = False
@@ -948,7 +950,8 @@ class Parser:
                 string = ''
             elif(i[3] == 'PUTS'):
                 if(flag):
-                    string += '_L'+str(self.indexLinhaTabTresEnd-1)
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
                     string += ' '
                     string += ':= '
                     flag = False
@@ -961,7 +964,8 @@ class Parser:
             
             elif(i[1][0] == 'f'):
                 if(flag):
-                    string += '_L'+str(self.indexLinhaTabTresEnd-1)
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
                     string += ' '
                     string += ':= '
                     flag = False
@@ -984,7 +988,8 @@ class Parser:
 
             elif(i[1][0] == 'p'):
                 if(flag):
-                    string += '_L'+str(self.indexLinhaTabTresEnd-1)
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
                     string += ' '
                     string += ':= '
                     flag = False
@@ -1006,7 +1011,8 @@ class Parser:
                 parametros = []
             elif(i[0] == 'IF'):
                 if(flag):
-                    string += '_L'+str(self.indexLinhaTabTresEnd-1)
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
                     string += ' '
                     string += ':= '
                     flag = False

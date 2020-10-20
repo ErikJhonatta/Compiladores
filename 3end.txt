@@ -3,3 +3,7 @@ T0 := 1 == vAuna
 if T0 goto _L0
 print 1
 _L0 := print 2
+T0 := 1 == vAuna
+if T0 goto _L1
+print 1
+_L1 := print 2

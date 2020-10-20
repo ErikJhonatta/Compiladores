@@ -4,3 +4,8 @@ if(vAuna <> 1){
 }else{
     puts 2;
 }
+if(vAuna <> 1){
+    puts 1;
+}else{
+    puts 2;
+}
