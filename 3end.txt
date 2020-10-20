@@ -1,7 +1,0 @@
-vB := false
-vTeste2 := true
-T0 := vTeste2 <> vB
-if T0 goto _L0
-vA := 1
-_L0 := vA := 0
-vB := true

@@ -1,3 +1,5 @@
+int vContador = 1;
+int vAuna = 1;
 boolean vB = false;
 boolean vTeste2 = true;
 if(vB==vTeste2){
@@ -6,5 +8,4 @@ if(vB==vTeste2){
     int vA = 0;
     vB = true;
 }
-
 
