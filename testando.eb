@@ -1,13 +1,11 @@
 int vAuna = 1;
-func int fDale(int vA){
-    int vContador = 1;
-    return vContador;
+if(vAuna <> 1){
+    puts 1;
+}else{
+    puts 2;
 }
-func boolean fBool(int vA){
-    boolean vContador2 = false;
-    return vContador2;
+if(vAuna <> 1){
+    puts 1;
+}else{
+    puts 2;
 }
-
-
-boolean vTeste = fBool(2);
-int vTeste2 = fDale(2);

@@ -916,9 +916,10 @@ class Parser:
             if(i[0] == '='):#atribuição
                 if(flag):
                     string += '_L'+str(self.indexLinhaTabTresEnd-1)
+                    self.indexLinhaTabTresEnd +=1
                     string += ' '
                     string += ':= '
-                    flag = 0
+                    flag = False
                 string += str(i[3])
                 string += ' '
                 string += ':'+str(i[0])
@@ -929,6 +930,12 @@ class Parser:
                 string = ''
 
             elif(i[0] == '+' or i[0] == '-' or i[0] == '*' or i[0] == '/'):
+                if(flag):
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
+                    string += ' '
+                    string += ':= '
+                    flag = False
                 string += str(i[3])
                 string += ' '
                 string += ':'+'='
@@ -942,6 +949,12 @@ class Parser:
                 arq.write(string)
                 string = ''
             elif(i[3] == 'PUTS'):
+                if(flag):
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
+                    string += ' '
+                    string += ':= '
+                    flag = False
                 string += 'print'
                 string += ' '
                 string += str(i[1])
@@ -950,6 +963,12 @@ class Parser:
                 string = ''
             
             elif(i[1][0] == 'f'):
+                if(flag):
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
+                    string += ' '
+                    string += ':= '
+                    flag = False
                 parametros = []
                 for x in range(len(i[2])):
                     parametros.append(i[2][x][2])
@@ -968,6 +987,12 @@ class Parser:
                 parametros = []
 
             elif(i[1][0] == 'p'):
+                if(flag):
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
+                    string += ' '
+                    string += ':= '
+                    flag = False
                 parametros = []
                 for x in range(len(i[2])):
                     parametros.append(i[2][x][2])
@@ -985,6 +1010,12 @@ class Parser:
                 string = ''
                 parametros = []
             elif(i[0] == 'IF'):
+                if(flag):
+                    string += '_L'+str(self.indexLinha)
+                    self.indexLinha +=1
+                    string += ' '
+                    string += ':= '
+                    flag = False
                 indice = self.buscarIndiceTab3(i)
                 if(indice != '' and indice > 0):#var antes de IF, que contem a condição
 
