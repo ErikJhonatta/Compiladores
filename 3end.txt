@@ -8,3 +8,4 @@ T0 := vContador - 3
 T1 := T0 * vAuna
 T2 := T1 - vContador
 vOi := T2 * vAuna
+print vOi

@@ -867,8 +867,15 @@ class Parser:
                 string += '\n'
                 arq.write(string)
                 string = ''
-        arq.close()
+            elif(i[3] == 'PUTS'):
+                string += 'print'
+                string += ' '
+                string += str(i[1])
+                string += '\n'
+                arq.write(string)
+                string = ''
 
+        arq.close()
     
     def gerarCodPuts(self, temp):
         quadrupla = []
@@ -877,7 +884,7 @@ class Parser:
         quadrupla.append('NULL')
         quadrupla.append(temp[0])
 
-        self.tabTresEnderecos(quadrupla)
+        self.tabTresEnderecos.append(quadrupla)
 
 
     
