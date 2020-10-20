@@ -345,6 +345,10 @@ class Parser:
                     raise Exception("Erro Semântico, variavel não está declarada neste escopo: "+str(self.tokenAtual().linha))
 
             elif(self.tokenAtual().lexema[0] == 'f' or self.tokenAtual().lexema[0] == 'p'):
+
+                if(not self.checkProcExiste(self.tokenAtual().lexema)):  
+                    raise Exception("Erro Semântico, procedimento não declarado na linha: "+str(self.tokenAtual().linha))  
+
                 self.procurar(self.tokenAtual().lexema)
                 self.indexToken +=1
                 if(self.tokenAtual().tipo == 'LBRACK'):
@@ -1072,7 +1076,14 @@ class Parser:
             if(self.tempFuncEProc[x][2] == lexema and lexema[0] == 'f'):
                 self.gerarCodFunc(self.tempFuncEProc[x])
             elif(self.tempFuncEProc[x][2] == lexema and lexema[0] == 'p'):
-                self.gerarCodProc(self.tempFuncEProc[x])        
+                self.gerarCodProc(self.tempFuncEProc[x])   
+
+    def checkProcExiste(self,proc):           
+        achou = False
+        for i in self.tabSimbolos:
+            if(i[2].strip("'") == proc):
+                achou = True
+        return achou     
 
     
         

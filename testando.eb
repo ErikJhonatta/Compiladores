@@ -1,3 +1,5 @@
+int vContador = 1;
+int vAuna = 1;
 boolean vB = false;
 boolean vTeste2 = true;
 if(vB==vTeste2){
@@ -21,4 +23,3 @@ proc pCaraDeSerraMarmore(int dale, boolean dale2, int dale01){
 fDale2(2, 10);
 pCaraDeSerraMarmore(1,false,3);
 fDale2(2, 10);
-
