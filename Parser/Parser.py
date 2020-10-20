@@ -838,3 +838,9 @@ class Parser:
             quadrupla.append('NULL')
             quadrupla.append(temp[2].strip("'"))
             self.tabTresEnderecos.append(quadrupla)
+        
+        self.gerarArqCod()
+    
+    
+    def gerarArqCod(self):
+        pass
