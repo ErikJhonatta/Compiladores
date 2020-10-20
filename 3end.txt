@@ -1,0 +1,3 @@
+vAuna := 1
+vContador := 1
+vContador2 := false

@@ -1,11 +1,13 @@
-int vContador = 1;
 int vAuna = 1;
-boolean vB = false;
-boolean vTeste2 = true;
-if(vB==vTeste2){
-    int vA = 1;
-}else{
-    int vA = 0;
-    vB = true;
+func int fDale(int vA){
+    int vContador = 1;
+    return vContador;
+}
+func boolean fBool(int vA){
+    boolean vContador2 = false;
+    return vContador2;
 }
 
+
+boolean vTeste = fBool(2);
+int vTeste2 = fDale(2);

@@ -697,7 +697,14 @@ class Parser:
             simbAtual = temp
             if(simbAtual[1] == 'INT'):
                 if(self.flag):# Se a flag do parser tiver true, boolean n pode receber int e vice e versa
-                    if(simbAtual[3].isnumeric() or (re.match(r"(?![true|false])[0-9A-Za-z]*\({0,}( ){0,}([+-\/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",simbAtual[3])) is not None):
+                    if(simbAtual[3][0] == 'f'):
+                        for k in self.tempFuncEProc:
+
+                            if(k[0] == 'FUNC' and k[2] in simbAtual[3] and k[1] == 'INT'):
+                                return True
+                            else:
+                                raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
+                    elif(simbAtual[3].isnumeric() or (re.match(r"(?![true|false])[0-9A-Za-z]*\({0,}( ){0,}([+-\/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",simbAtual[3])) is not None):
                         if(not ('<' in simbAtual[3] or '>' in simbAtual[3] or '<>' in simbAtual[3] or '>=' in simbAtual[3] or '<=' in simbAtual[3])):
                             self.indexDecAtual += 1
                             return True
@@ -711,18 +718,19 @@ class Parser:
                     return True
                 else:
                     #linha do ponto e virgula que é a mesma
-                        raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
+                    raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
             elif(simbAtual[1] == 'TBOOLEAN'):
                 if(simbAtual[3] == 'true' or simbAtual[3] == 'false'):
                     self.indexDecAtual +=1
                     return True
                 elif(self.checkValBool(simbAtual[3])):
+
                     self.indexDecAtual +=1
                     return True
 
                 else:
                     #linha do ponto e virgula que é a mesma
-                        raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
+                    raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
         
         elif(tipo == 'FUNCDEC'):
             simbDecFuncao = self.tabSimbolos[index]
@@ -742,8 +750,15 @@ class Parser:
 
         #elif(outros tipos)
     def checkValBool(self, string):
+        
         if(self.flag):
-            if('<' in string or '=' in string or '>' in string):
+            if(string[0] == 'f'):
+                for k in self.tempFuncEProc:
+                    
+                    if(k[0] == 'FUNC' and k[2] in string and k[1] == 'TBOOLEAN'):
+                        return True
+                return False
+            elif('<' in string or '=' in string or '>' in string):
                 return True
             return False
         #checa se é numero, variavel ou expressao aritmetica ou retorno de funcao | ideia que se for diferente de 0 é true
@@ -775,6 +790,13 @@ class Parser:
         for i in self.tabSimbolos:
             if(i[2].strip("'") == func):
                 achou = True
+        return achou
+
+    def returnFunc(self,func):
+        achou = ''
+        for i in self.tabSimbolos:
+            if(i[2].strip("'") == func):
+                achou = i
         return achou
 
     def adicionarVarDeRetornoFuncTabSimbolo(self, temp):
