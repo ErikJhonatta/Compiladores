@@ -17,3 +17,4 @@ func boolean fDale2(int vUniu){
 proc pCaraDeSerraMarmore(int dale, boolean dale2, int dale01){
 	int vTestando = 2;
 }
+vOi = 1 + 3;

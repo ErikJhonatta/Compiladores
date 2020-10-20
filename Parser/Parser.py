@@ -330,6 +330,7 @@ class Parser:
                             self.indexToken +=1
                             temp.append(self.indexEscopoAtual)
                             self.tabSimbolos.append(temp)
+                            self.checkSemantica('VARATTR',self.indexDecAtual,temp)
                             self.gerarCodVar(temp)
                         else:
                             raise Exception('Erro sintatico Ponto e virgula Var atribuição na linha '+str(self.tokenAtual().linha))
@@ -679,7 +680,7 @@ class Parser:
     #idx 3 - valor da var, retorno da func etc: 1+2+3
     #idx 4 - escopo onde aquela var ou func tá - self.indexEscopoAtual
     def checkSemantica(self,tipo,index,temp):#checa semantica, se tiver tudo OK return True
-        if(tipo == 'VARDEC'): # checa semantica de declaração de Variável
+        if(tipo == 'VARDEC' or tipo == 'VARATTR'): # checa semantica de declaração de Variável
             simbAtual = temp
             if(simbAtual[1] == 'INT'):
                 if(self.flag):# Se a flag do parser tiver true, boolean n pode receber int e vice e versa
