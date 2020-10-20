@@ -13,6 +13,7 @@ class Parser:
         self.indexDecFunc = 0
         self.tabTresEnderecos = []
         self.indexTabTresEnd = 0
+        self.indexLinha = 0
 
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
@@ -54,7 +55,7 @@ class Parser:
                         self.tabSimbolos.append(temp)
                         if(self.checkSemantica('VARDEC',self.indexDecAtual)):
                             self.gerarCodVar(temp)
-                            
+                            self.gerarArqCod(temp)
                             return
                     else:
                         self.erro = True
@@ -833,14 +834,48 @@ class Parser:
             
                 
         else:#Se não tiver nenhum simbolo
-            quadrupla.append('NULL')
-            quadrupla.append(temp[2].strip("'"))
+            quadrupla.append('=')
+            quadrupla.append(temp[3].strip("'"))
             quadrupla.append('NULL')
             quadrupla.append(temp[2].strip("'"))
             self.tabTresEnderecos.append(quadrupla)
         
-        self.gerarArqCod()
-    
-    
-    def gerarArqCod(self):
-        pass
+    def gerarArqCod(self,temp):
+        string = ''
+        arq = open("3end.txt",'a')
+        if(temp[0] == 'VAR'): #Atribuição
+            string += str(temp[2])
+            string += ' '
+            string += ':='
+            string += ' '
+            string += str(temp[3])
+            string += '\n'
+            arq.write(string)
+        arq.close()
+        
+        
+        # string =''
+        # for i in self.tabTresEnderecos:
+        #     print(i)
+        # arq = open("3end.txt",'w')
+        # for i in self.tabTresEnderecos:
+        #     if(i[0] == '='):#atribuição
+                
+        #         string += str(i[3])
+        #         string += ' '
+        #         string += ':'+str(i[0])
+        #         string += ' '
+        #         string += str(i[1])
+        #         string += '\n'
+        #         arq.write(string)
+        #         string = ''
+        #     elif(i[0] == '+' or i[0] == '-' or i[0] == '*' or i[0] == '/'):
+        #         string += str(i[3])
+        #         string += ' '
+        #         string += ':'+'='
+        #         string += ' '
+        #         string += str(i[1])
+        #         string += '\n'
+        #         arq.write(string)
+        #         string = ''
+        # arq.close()
