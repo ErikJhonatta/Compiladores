@@ -21,11 +21,11 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
 
-    # for i in parser.tabSimbolos:
-    #     print(i)
+    for i in parser.tabSimbolos:
+        print(i)
 
     # print('-------------------------------')
 
-    for i in parser.tabTresEnderecos:
-        print(i)
+    # for i in parser.tabTresEnderecos:
+    #     print(i)
     parser.gerarArqCod()

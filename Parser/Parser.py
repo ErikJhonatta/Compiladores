@@ -280,11 +280,9 @@ class Parser:
             temp.append('PUTS')
             temp.append('NULL')
             temp.append('NULL')
-            temp.append('NULL')
-            temp.append(self.indexEscopoAtual)
-            self.tabSimbolos.append(temp)
             
             self.indexToken +=1
+            escopoDoPuts = self.indexEscopoAtual
             temp.append(self.tokenAtual().lexema)
             temp.append('NULL')
             temp.append(escopoDoPuts)
@@ -859,6 +857,10 @@ class Parser:
                 string += ':'+'='
                 string += ' '
                 string += str(i[1])
+                string += ' '
+                string += str(i[0])
+                string += ' '
+                string += str(i[2])
                 string += '\n'
                 arq.write(string)
                 string = ''
