@@ -16,6 +16,7 @@ class Parser:
         self.indexTabTresEnd = 0
         self.indexLinha = 0
         self.indexLinhaTabTresEnd = 0
+        self.tempFuncEProc = []
 
     def tokenAtual(self):
         return self.tabTokens[self.indexToken]
@@ -169,7 +170,9 @@ class Parser:
                                 raise Exception('Erro sintatico no retorno da função na linha '+str(self.tokenAtual().linha - 1))
                             self.indexToken +=1
 
-                            self.gerarCodFunc(temp)
+                            self.tempFuncEProc.append(temp)
+
+                            #print(self.tempFuncEProc)
 
                             if(self.checkSemantica('FUNCDEC', self.indexDecFunc,'')):
                                 return
@@ -267,7 +270,8 @@ class Parser:
 
                         self.indexToken += 1
 
-                        self.gerarCodProc(temp)
+                        self.tempFuncEProc.append(temp)
+                        #print(self.tempFuncEProc)
 
                         if(self.checkSemantica('PROCDEC', self.indexDecFunc,'')):
                             return
@@ -341,6 +345,7 @@ class Parser:
                     raise Exception("Erro Semântico, variavel não está declarada neste escopo: "+str(self.tokenAtual().linha))
 
             elif(self.tokenAtual().lexema[0] == 'f' or self.tokenAtual().lexema[0] == 'p'):
+                self.procurar(self.tokenAtual().lexema)
                 self.indexToken +=1
                 if(self.tokenAtual().tipo == 'LBRACK'):
                     self.indexToken+=1
@@ -1062,6 +1067,12 @@ class Parser:
         
         self.tabTresEnderecos.append(quadrupla)
 
+    def procurar(self, lexema):
+        for x in range(len(self.tempFuncEProc)):
+            if(self.tempFuncEProc[x][2] == lexema and lexema[0] == 'f'):
+                self.gerarCodFunc(self.tempFuncEProc[x])
+            elif(self.tempFuncEProc[x][2] == lexema and lexema[0] == 'p'):
+                self.gerarCodProc(self.tempFuncEProc[x])        
 
     
         

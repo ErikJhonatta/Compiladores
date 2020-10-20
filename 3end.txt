@@ -1,6 +1,31 @@
+
 vB := false
 vTeste2 := true
 T0 := vTeste2 <> vB
 IF T0 goto
 vA := 1
 vA := 0
+
+vContador := 1 + 2
+vAuna := false<>true
+vFunc := 5 * 8
+vAAA := false
+T0 := vContador - 3
+T1 := T0 * vAuna
+T2 := T1 - vContador
+vOi := T2 * vAuna
+print vOi
+vTestando := 12
+vTestando := 2
+param vUniu
+param vU
+_L0 := call fDale2,2
+param dale
+param dale2
+param dale01
+call pCaraDeSerraMarmore,3
+
+param vUniu
+param vU
+_L1 := call fDale2,2
+
