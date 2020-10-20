@@ -9,12 +9,16 @@ int vOi = vContador - 3 * vAuna - vContador * vAuna;
 
 puts vOi;
 
-func boolean fDale2(int vUniu){
-	boolean vTestando = false;
+func int fDale2(int vUniu, int vU){
+	int vTestando = 12;
 	return vTestando;
 }
 
 proc pCaraDeSerraMarmore(int dale, boolean dale2, int dale01){
 	int vTestando = 2;
 }
-vOi = 1 + 3;
+
+fDale2(2, 10);
+pCaraDeSerraMarmore(1,false,3);
+fDale2(2, 10);
+

@@ -2,20 +2,22 @@ vContador := 1 + 2
 vAuna := false<>true
 vFunc := 5 * 8
 vAAA := false
-param vA
-param vB
-_L0 := call fDale,2
 T0 := vContador - 3
 T1 := T0 * vAuna
 T2 := T1 - vContador
 vOi := T2 * vAuna
 print vOi
-vTestando := false
-param vUniu
-_L1 := call fDale2,1
+vTestando := 12
 vTestando := 2
+param vUniu
+param vU
+_L0 := call fDale2,2
 param dale
 param dale2
 param dale01
 call pCaraDeSerraMarmore,3
-vOi := 1 + 3
+
+param vUniu
+param vU
+_L1 := call fDale2,2
+
