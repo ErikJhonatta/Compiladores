@@ -281,12 +281,11 @@ class Parser:
             temp.append('NULL')
             temp.append('NULL')
             temp.append('NULL')
-            temp.append(self.indexEscopoAtual)
-            self.tabSimbolos.append(temp)
-            
+
             self.indexToken +=1
+            escopoDoPuts = self.indexEscopoAtual #Não tava definido
+
             temp.append(self.tokenAtual().lexema)
-            temp.append('NULL')
             temp.append(escopoDoPuts)
             if((self.tokenAtual().tipo == 'ID' and self.tokenAtual().lexema[0] == 'v') or self.tokenAtual().tipo == 'NUMBER'):
                 if(self.buscarSimboloVarPorLexema(self.tokenAtual().lexema) != '' and self.buscarSimboloVarPorLexema(self.tokenAtual().lexema)[4] == self.indexEscopoAtual):
@@ -297,6 +296,7 @@ class Parser:
                     raise Exception("Erro Semântico, variavel não está declarada neste escopo: "+str(self.tokenAtual().lexema)+" na linha"+str(self.tokenAtual().linha))
                 if(self.tokenAtual().tipo == 'SEMICOLON'):# se for um numero ou var o proximo token vai ser esse semicolon
                     self.indexToken += 1
+                    self.gerarCodPuts(temp)
                     self.tabSimbolos.append(temp)
                     return
                 else:
@@ -863,5 +863,17 @@ class Parser:
                 arq.write(string)
                 string = ''
         arq.close()
+
+    
+    def gerarCodPuts(self, temp):
+        quadrupla = []
+        quadrupla.append('NULL')
+        quadrupla.append(temp[4])
+        quadrupla.append('NULL')
+        quadrupla.append(temp[0])
+
+        self.tabTresEnderecos(quadrupla)
+
+
     
         
