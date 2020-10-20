@@ -1,9 +1,7 @@
-vContador := 100000
-vAuna := 2
-vOi := 1
-vBool := true
-vBool1 := false
-vFunc := 2
+vContador := 1 + 2
+vAuna := false<>true
+vFunc := 5 * 8
+vAAA := false
 param vA
 param vB
 _L0 := call fDale,2
@@ -12,7 +10,7 @@ T1 := T0 * vAuna
 T2 := T1 - vContador
 vOi := T2 * vAuna
 print vOi
-vTestando := true
+vTestando := false
 param vUniu
 _L1 := call fDale2,1
 vTestando := 2

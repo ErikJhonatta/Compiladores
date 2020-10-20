@@ -1,7 +1,8 @@
 from Parser.Escopo import Escopo
 import re
 class Parser:
-    def __init__(self, tabTokens):
+    def __init__(self, tabTokens,flag):
+        self.flag = flag
         self.tabTokens = tabTokens
         self.indexToken = 0
         self.erro = False
@@ -54,7 +55,7 @@ class Parser:
                         self.indexToken +=1
                         temp.append(self.indexEscopoAtual)
                         self.tabSimbolos.append(temp)
-                        if(self.checkSemantica('VARDEC',self.indexDecAtual)):
+                        if(self.checkSemantica('VARDEC',self.indexDecAtual,temp)):
                             self.gerarCodVar(temp)
                             return
                     else:
@@ -170,7 +171,7 @@ class Parser:
 
                             self.gerarCodFunc(temp)
 
-                            if(self.checkSemantica('FUNCDEC', self.indexDecFunc)):
+                            if(self.checkSemantica('FUNCDEC', self.indexDecFunc,'')):
                                 return
 
                         else:
@@ -268,7 +269,7 @@ class Parser:
 
                         self.gerarCodProc(temp)
 
-                        if(self.checkSemantica('PROCDEC', self.indexDecFunc)):
+                        if(self.checkSemantica('PROCDEC', self.indexDecFunc,'')):
                             return
                     else:
                         self.erro = True
@@ -555,9 +556,20 @@ class Parser:
                     self.erro = True
                     raise Exception('Erro sintatico numero op ?, (logical expression) na linha '+str(self.tokenAtual().linha))
         
-        elif(self.tokenAtual().tipo == 'BOOLEAN'):# Se a expressão for só um boolean
+        elif(self.tokenAtual().tipo == 'BOOLEAN'):
             val = self.tokenAtual().lexema
             self.indexToken +=1
+            if(self.tokenAtual().tipo == 'EQUAL' or self.tokenAtual().tipo == 'DIFF' or self.tokenAtual().tipo == 'LESS' or self.tokenAtual().tipo == 'LESSEQUAL' or self.tokenAtual().tipo == 'GREAT' or self.tokenAtual().tipo == 'GREATEQUAL'):
+                val += self.tokenAtual().lexema
+                self.indexToken += 1
+                
+                if(self.tokenAtual().tipo == 'BOOLEAN'):
+                    val += self.tokenAtual().lexema
+                    self.indexToken +=1
+                elif(self.tokenAtual().tipo == 'NUMBER' or self.tokenAtual().tipo == 'ID'):
+                    val += self.tokenAtual().lexema
+                    self.indexToken +=1
+
             return val
 
         elif(self.tokenAtual().tipo == 'ID'):# Identificador de Função e Variável
@@ -666,17 +678,27 @@ class Parser:
     #idx 2 - identificador da func ou da var: vA, fSum
     #idx 3 - valor da var, retorno da func etc: 1+2+3
     #idx 4 - escopo onde aquela var ou func tá - self.indexEscopoAtual
-    def checkSemantica(self,tipo,index):#checa semantica, se tiver tudo OK return True
+    def checkSemantica(self,tipo,index,temp):#checa semantica, se tiver tudo OK return True
         if(tipo == 'VARDEC'): # checa semantica de declaração de Variável
-            simbAtual = self.tabSimbolos[index]
+            simbAtual = temp
             if(simbAtual[1] == 'INT'):
-                if(simbAtual[3].isnumeric() or bool(re.match(r"[0-9A-Za-z]*\({0,}( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",simbAtual[3]))):
+                if(self.flag):# Se a flag do parser tiver true, boolean n pode receber int e vice e versa
+                    if(simbAtual[3].isnumeric() or (re.match(r"(?![true|false])[0-9A-Za-z]*\({0,}( ){0,}([+-\/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",simbAtual[3])) is not None):
+                        if(not ('<' in simbAtual[3] or '>' in simbAtual[3] or '<>' in simbAtual[3] or '>=' in simbAtual[3] or '<=' in simbAtual[3])):
+                            self.indexDecAtual += 1
+                            return True
+                        else:
+                            raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
+                    else:
+                        raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
+
+                elif(simbAtual[3].isnumeric() or (re.match(r"[0-9A-Za-z]*\({0,}( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",simbAtual[3]))):
                     self.indexDecAtual +=1
                     return True
                 else:
                     #linha do ponto e virgula que é a mesma
-                    raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha))
-            if(simbAtual[1] == 'TBOOLEAN'):
+                        raise Exception("Erro Semântico, variavel do tipo inteiro nao recebe inteiro na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
+            elif(simbAtual[1] == 'TBOOLEAN'):
                 if(simbAtual[3] == 'true' or simbAtual[3] == 'false'):
                     self.indexDecAtual +=1
                     return True
@@ -686,7 +708,7 @@ class Parser:
 
                 else:
                     #linha do ponto e virgula que é a mesma
-                    raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha))
+                        raise Exception("Erro Semântico, variavel do tipo boolean nao recebe boolean na linha: "+str(self.tokenAtual().linha) +' '+ str(simbAtual[2]))
         
         elif(tipo == 'FUNCDEC'):
             simbDecFuncao = self.tabSimbolos[index]
@@ -706,13 +728,18 @@ class Parser:
 
         #elif(outros tipos)
     def checkValBool(self, string):
+        if(self.flag):
+            if('<' in string or '=' in string or '>' in string):
+                return True
+            return False
         #checa se é numero, variavel ou expressao aritmetica ou retorno de funcao | ideia que se for diferente de 0 é true
         if(string.isnumeric() or bool(re.match(r"[0-9A-Za-z]*\({0,}( ){0,}([+-/*]( ){0,}[0-9A-Za-a]*( ){0,})*\){0,}",string))):
             return True
         #expressao logica, so checo o primeiro char apos o numero
         #expressoes logicas pela gramatica so tem 2 termos 1 < 2 e nao 1 < 2 < 3
-        if(string[1] == '<' or string[1] == '=' or string[1] == '>'):
+        if('<' in string or '=' in string or '>' in string):
             return True
+        return False
 
     def checkExisteNoEscopo(self, dec, tipo, variavel, indexEscopo, array):
         for x in range(len(array)):
