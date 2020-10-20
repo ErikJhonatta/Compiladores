@@ -12,6 +12,11 @@ T1 := T0 * vAuna
 T2 := T1 - vContador
 vOi := T2 * vAuna
 print vOi
-vTestando := 2
+vTestando := true
 param vUniu
 _L1 := call fDale2,1
+vTestando := 2
+param dale
+param dale2
+param dale01
+pCaraDeSerraMarmore,3

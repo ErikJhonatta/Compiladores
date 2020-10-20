@@ -266,6 +266,8 @@ class Parser:
 
                         self.indexToken += 1
 
+                        self.gerarCodProc(temp)
+
                         if(self.checkSemantica('PROCDEC', self.indexDecFunc)):
                             return
                     else:
@@ -896,6 +898,24 @@ class Parser:
                 string = ''
                 parametros = []
 
+            elif(i[1][0] == 'p'):
+                parametros = []
+                for x in range(len(i[2])):
+                    parametros.append(i[2][x][2])
+                
+                string = ''
+                for x in range(len(parametros)):
+                    string += 'param ' + parametros[x]
+                    string += '\n'
+                    arq.write(string)
+                    string = ''
+
+                string += i[1] + ',' + str(len(parametros)) + '\n'
+                arq.write(string)
+
+                string = ''
+                parametros = []
+
         arq.close()
     
     def gerarCodPuts(self, temp):
@@ -916,6 +936,15 @@ class Parser:
         self.indexLinhaTabTresEnd += 1
         quadrupla.append(linha)
 
+        self.tabTresEnderecos.append(quadrupla)
+
+    def gerarCodProc(self, temp):
+        quadrupla = []
+        quadrupla.append('NULL')
+        quadrupla.append(temp[2])
+        quadrupla.append(temp[5])
+        quadrupla.append('NULL')
+        
         self.tabTresEnderecos.append(quadrupla)
 
 

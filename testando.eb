@@ -13,6 +13,10 @@ vOi = vContador - 3 * vAuna - vContador * vAuna;
 puts vOi;
 
 func boolean fDale2(int vUniu){
+	boolean vTestando = true;
+	return vTestando;
+}
+
+proc pCaraDeSerraMarmore(int dale, boolean dale2, int dale01){
 	int vTestando = 2;
-	return vUniu;
 }
