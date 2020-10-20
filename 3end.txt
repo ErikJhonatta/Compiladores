@@ -4,8 +4,14 @@ vOi := 1
 vBool := true
 vBool1 := false
 vFunc := 2
+param vA
+param vB
+_L0 := call fDale,2
 T0 := vContador - 3
 T1 := T0 * vAuna
 T2 := T1 - vContador
 vOi := T2 * vAuna
 print vOi
+vTestando := 2
+param vUniu
+_L1 := call fDale2,1
