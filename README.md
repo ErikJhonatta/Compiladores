@@ -150,4 +150,4 @@ Link do Projeto: [https://github.com/ErikJhonatta/Compiladores](https://github.c
 [issues-shield]: https://img.shields.io/github/issues/ErikJhonatta/Compiladores.svg?style=flat-square
 [issues-url]: https://github.com/ErikJhonatta/Compiladores/issues
 [license-shield]: https://img.shields.io/github/license/ErikJhonatta/Compiladores.svg?style=flat-square
-[license-url]: https://github.com/ErikJhonatta/Compiladores/blob/master/LICENSE.txt
+[license-url]: https://github.com/ErikJhonatta/Compiladores/blob/master/LICENSE
