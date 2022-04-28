@@ -114,7 +114,7 @@ python3 Main.py test.eb
 <!-- LICENSE -->
 ## Licença
 
-Distribuído sob a Licença MIT. Veja `LICENSE` para mais informações.
+Distribuído sob a Licença AGPL-3.0. Veja `LICENSE` para mais informações.
 
 
 
